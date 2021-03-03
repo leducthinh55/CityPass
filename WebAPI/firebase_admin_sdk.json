@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "citypass131999",
+  "private_key_id": "14d14f69e33cc02b7adcbcb985b7b42d0d288a66",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDxYAqSIDMiBN3z\n3R1TMr6lnkcsgZo195KSCXrv09BgeLp3jAttbdnauyTs75M8C2mA3TdTvhFnZcRU\nj8J1lEiZLN/qR6h9UHH4A3lzSkRodAK6L39BeXJc/RMwBA5hH/PkIq/9AhpeEtri\nMksuePFof/RLq+buo8HLeKKJHrSoQT2El49JZjB9Pm6iV2BDhcjpLDbBMyBDZoLe\nyiY2SXS491lX5SsqAvQgy+BPRmjZhX6bj4a2njHDrFjdWmB2wD6xOa9i2DEagoUC\nqrd5CGxwoB0M9j0UNSkCjrniUftkPzwCTl9r6Xk+EWRndJdRBQZd9uAfatyXCwih\nbdixlOuVAgMBAAECggEAEfN8lcWDSAJop1xIdAmQGC0fSfYRi/XvlqDR3cg49RPF\nemKV7vt+ej/0zRI8Nvj6TbUmCjpWfQQah9dxNOFkTNADjx7pLviuoS1Q+PwK/mGy\nWjpyEmJ/2N6RcL68ewivUMYrpHtljp2EXdIzuS8RdR4fAwmz0QeowAMmw1/fO6wJ\nd3YKBUVEVJF6s93DPXVPK9GwfXYJrhEmneGLRrgBf5dHkzpN9mFzpcj0kXhVHfcU\nW/tbZ7nAy2Mot0698PCITcanUfJCaQzQM8oZu/BWMKlyl5SMuXiHhCoSXhrxwZVZ\nJwtCJvUMjcBjruyiIsJL2b1Hs25kiqDMMVyYW60weQKBgQD6gvzbK7MrMOvv3u/f\nWf+Lq3/BdEeDFKX9+uDLOhOILotM5gkbL85cg6RtHztda8V3EnWmPE5bzsO1icVc\n7zSonlqNHZ2txGMmiJwyviuhl75AhflDIjp5hA58b/VJUcHa55nbOuHWWIcynQPs\n50szNBppRYyuXGQWejEtrARkxwKBgQD2qc+RzUVEcK225JMlJFJq+3LgSHsMbA5S\nuoO2yFrjogROSF9PEyHkcYchH5vE0kUbcFMo50o9rvMjJPg3wTD4YbY2g1Vi6cEu\nVWEcT5sGq/DsIBZG1rTG/P/YLARAzbsbwKh6aSq/bWvdlDgYOB70CppQXc1f3OE0\nODaXDGqYwwKBgFBb+n7YCtZ9EAJXcn0kYpxMPGQzR8lds03Az6GBlMhnndniJOOq\ntzjoJbO3hBSYwLRMoJ7d04kRz6gJdN02Ap9ghM2lxXH7gI7Y3bpNVLO2eJo8H9SQ\nQ0+9s+PpCjcl2di92JYB0nYu2de7lInHPFFFkn9YhyNbkeO/+Myc1J/7AoGBAODl\nz1XW3TMbsaeyHN+ekG7uuLz6GQcodp7DZFiBsS0fieF+ZzgH770ELfrrgPEh7tSn\nw4rl53D6VMFUceUUBnxRSvvFH1NCYlrGifZwNp8MomwIjYclOEq+Xt9QssgLTHBv\nZq3Fua40LEcpX0Pl14MXL7/a5uhi0gr0vgFW1tJVAoGADNS9BcGD91Y3jy7oy+v5\n73SZNF8IhFjqWIYfvIo0FepPBW8+6r7tcQPvRaH1NnkM8JGLUvstwOMk2dKWW2KK\nXFcMvd4C0LD/5seGT+nqHgxyUb8NJ/MVM5QBvO+M8YmDUFQn1X6AqqkYftUDBMD/\n8H0DW+gSZIdbLun5hXrGe4E=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-1d2vg@citypass131999.iam.gserviceaccount.com",
+  "client_id": "108655046416479739111",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1d2vg%40citypass131999.iam.gserviceaccount.com"
+}

@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200923155754_update_product.cs" />
+    <Compile Remove="Migrations\20200923155754_update_product.Designer.cs" />
+    <Compile Remove="Migrations\20200923160040_update_product.cs" />
+    <Compile Remove="Migrations\20200923160040_update_product.Designer.cs" />
+    <Compile Remove="Migrations\20200923232936_add_product_type.cs" />
+    <Compile Remove="Migrations\20200923232936_add_product_type.Designer.cs" />
+    <Compile Remove="Migrations\20200923235835_update.cs" />
+    <Compile Remove="Migrations\20200923235835_update.Designer.cs" />
+    <Compile Remove="Migrations\20200924015454_abcde.cs" />
+    <Compile Remove="Migrations\20200924015454_abcde.Designer.cs" />
+    <Compile Remove="Migrations\20200924015953_abcde.cs" />
+    <Compile Remove="Migrations\20200924015953_abcde.Designer.cs" />
+    <Compile Remove="Migrations\20200924095252_andd.cs" />
+    <Compile Remove="Migrations\20200924095252_andd.Designer.cs" />
+    <Compile Remove="Migrations\20200927024347_kfeff.cs" />
+    <Compile Remove="Migrations\20200927024347_kfeff.Designer.cs" />
+    <Compile Remove="Migrations\20200927025321_dddd.cs" />
+    <Compile Remove="Migrations\20200927025321_dddd.Designer.cs" />
+    <Compile Remove="Migrations\20200928020535_kttt.cs" />
+    <Compile Remove="Migrations\20200928020535_kttt.Designer.cs" />
+    <Compile Remove="Migrations\20200928022957_kttt.cs" />
+    <Compile Remove="Migrations\20200928022957_kttt.Designer.cs" />
+    <Compile Remove="Migrations\20200929091451_ktttt.cs" />
+    <Compile Remove="Migrations\20200929091451_ktttt.Designer.cs" />
+    <Compile Remove="Migrations\20200929091832_ktttt.cs" />
+    <Compile Remove="Migrations\20200929091832_ktttt.Designer.cs" />
+    <Compile Remove="Migrations\20200929095402_xnxx.cs" />
+    <Compile Remove="Migrations\20200929095402_xnxx.Designer.cs" />
+    <Compile Remove="Migrations\20200929095635_xnxx.cs" />
+    <Compile Remove="Migrations\20200929095635_xnxx.Designer.cs" />
+    <Compile Remove="Migrations\20200929095946_xnxx.cs" />
+    <Compile Remove="Migrations\20200929095946_xnxx.Designer.cs" />
+    <Compile Remove="Migrations\20200929100250_xnxx.cs" />
+    <Compile Remove="Migrations\20200929100250_xnxx.Designer.cs" />
+    <Compile Remove="Migrations\20200929100555_xnxx.cs" />
+    <Compile Remove="Migrations\20200929100555_xnxx.Designer.cs" />
+    <Compile Remove="Migrations\20201001164316_xnxxe.cs" />
+    <Compile Remove="Migrations\20201001164316_xnxxe.Designer.cs" />
+    <Compile Remove="Migrations\20201001165122_xnxxes.cs" />
+    <Compile Remove="Migrations\20201001165122_xnxxes.Designer.cs" />
+    <Compile Remove="Migrations\20201002071658_fuck.cs" />
+    <Compile Remove="Migrations\20201002071658_fuck.Designer.cs" />
+    <Compile Remove="Migrations\20201002072752_abcd.cs" />
+    <Compile Remove="Migrations\20201002072752_abcd.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+</Project>
