@@ -8,7 +8,7 @@ using Service;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[Controller]")]
     public class UserPassesController : Controller
     {
         private readonly IUserPassService _iUserPassService;

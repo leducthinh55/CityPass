@@ -14,8 +14,17 @@ namespace WebAPI.Helpers
         {
             CreateMap<AttractionVM, Attraction>();
             CreateMap<AttractionCM, Attraction>();
-            CreateMap<Attraction, AttractionVM>().ForMember(des => des.City,
-                act => act.MapFrom(src => src.City.Name));
+            CreateMap<Attraction, AttractionVM>()
+                .ForMember(des => des.City,
+                act => act.MapFrom(src => src.City.Name))
+                .ForMember(des => des.Category,
+                act => act.MapFrom(src => src.Category.Name));
+
+            CreateMap<TicketType, TicketTypeVM>()
+                .ForMember(des => des.City,
+                act => act.MapFrom(src => src.Atrraction.City.Name))
+                .ForMember(des => des.Atrraction,
+                act => act.MapFrom(src => src.Atrraction.Name));
         }
     }
 }

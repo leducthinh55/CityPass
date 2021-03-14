@@ -11,11 +11,12 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[Controller]")]
+    [Route("api/[controller]")]
     public class AttractionsController : Controller
     {
         private readonly IAtrractionService _IAtrractionService;
@@ -32,15 +33,13 @@ namespace WebAPI.Controllers
             _IMailService = IMailService;
         }
         [HttpGet("{id}")]
-        [Authorize]
         public IActionResult GetAttraction(int id)
         {
             try
             {
-                var attraction = _IAtrractionService.GetAtrractionById(id);
+                var attraction = _IAtrractionService.GetAllAtrraction(_ => _.Id == id, _ => _.City, _ => _.Category, _ => _.WorkingTimes).FirstOrDefault();
                 if (attraction == null) return NotFound();
-                var result = _mapper.Map<AttractionVM>(attraction);
-                return Ok(result);
+                return Ok(attraction);
             }
             catch (Exception e)
             {
@@ -52,24 +51,57 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var list = _IAtrractionService.GetAllAtrraction(null, _ => _.City);
+                var list = _IAtrractionService.GetAllAtrraction(null, _ => _.City, _ => _.Category);
+                if (!String.IsNullOrWhiteSpace(attractionSM.City))
+                {
+                    list = list.Where(_ => _.City.Name.ToLower() == attractionSM.City.ToLower());
+                }
                 if (!String.IsNullOrWhiteSpace(attractionSM.Name))
                 {
                     list = list.Where(_ => _.Name.ToLower().Contains(attractionSM.Name.ToLower()));
                 }
-                if(attractionSM.IsTemporarityClosed != null)
+                if (attractionSM.IsTemporarityClosed != null)
                 {
                     list = list.Where(_ => _.IsTemporarityClosed == attractionSM.IsTemporarityClosed);
                 }
-                if(!String.IsNullOrWhiteSpace(attractionSM.City))
+                if (!String.IsNullOrWhiteSpace(attractionSM.Category))
                 {
-                    list = list.Where(_ => _.City.Name.ToLower() == attractionSM.City.ToLower());
+                    list = list.Where(_ => _.Category.Name.ToLower() == attractionSM.Category.ToLower());
                 }
-                int total = list.Count();
-                list = GenericSorter<Attraction>.Sort(list, defaultSearch.SortBy = "Name", defaultSearch.SortDir);
-                var data = list.Skip(defaultSearch.PageIndex * defaultSearch.PageSize)
+                int total = list.ToList().Count();   
+                switch(defaultSearch.SortBy)
+                {
+                    case "name":
+                        list = GenericSorter.Sort(list, _ => _.Name, defaultSearch.SortDir);
+                        break;
+                    case "category":
+                        list  = GenericSorter.Sort(list, _ => _.Category.Name, defaultSearch.SortDir);
+                        break;
+                    case "city":
+                        list = GenericSorter.Sort(list, _ => _.City.Name, defaultSearch.SortDir);
+                        break;
+                    default:
+                        list = GenericSorter.Sort(list, _ => _.CreateAt, defaultSearch.SortDir);
+                        break;
+                }
+                var data = list.Skip(defaultSearch.PageIndex)
                     .Take(defaultSearch.PageSize)
-                    .Select(_ => _mapper.Map<AttractionVM>(_)).ToList();
+                    .Select(_ => _mapper.Map<AttractionVM>(_))
+                    .ToList();
+                return Ok(new { data, total });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpGet("get-all")]
+        public IActionResult GetAllAttraction()
+        {
+            try
+            {
+                var data = _IAtrractionService.GetAllAtrraction().ToList();
+                var total = data.Count;
                 return Ok(new { data, total });
             }
             catch (Exception e)
@@ -83,7 +115,7 @@ namespace WebAPI.Controllers
             try
             {
                 var city = _ICityService.GetCityById(attractionCM.CityId);
-                if(city == null)
+                if (city == null)
                 {
                     return BadRequest();
                 }
@@ -94,6 +126,7 @@ namespace WebAPI.Controllers
                     return BadRequest();
                 }
                 var attraction = _mapper.Map<Attraction>(attractionCM);
+                attraction.CreateAt = DateTime.Now;
                 _IAtrractionService.AddAtrraction(attraction);
                 bool result = await _IAtrractionService.SaveAtrraction();
                 if (!result)
@@ -120,6 +153,8 @@ namespace WebAPI.Controllers
                 attraction.Address = attractionUM.Address;
                 attraction.Description = attractionUM.Description;
                 attraction.IsTemporarityClosed = attractionUM.IsTemporarityClosed;
+                attraction.CategoryId = attractionUM.CategoryId;
+                attraction.CityId = attractionUM.CityId;
                 _IAtrractionService.UpdateAtrraction(attraction);
                 bool result = await _IAtrractionService.SaveAtrraction();
                 if (!result)

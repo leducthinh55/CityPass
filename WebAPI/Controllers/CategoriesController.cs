@@ -2,34 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Core.Entities;
-using Infrastructure.Data;
 using Service;
-using AutoMapper;
 using WebAPI.Utils;
+using Core.Entities;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class CitiesController : ControllerBase
+    public class CategoriesController : Controller
     {
-        private readonly ICityService _ICityService;
-        public CitiesController(ICityService ICityService)
+        private readonly ICategoryService _ICategoryService;
+        public CategoriesController(ICategoryService ICategoryService)
         {
-            _ICityService = ICityService;
+            _ICategoryService = ICategoryService;
         }
         [HttpGet("{id}")]
-        public IActionResult GetCity(int id)
+        public IActionResult GetCategory(int id)
         {
             try
             {
-                var city = _ICityService.GetCityById(id);
-                if (city == null) return NotFound();
-                return Ok(city);
+                var Category = _ICategoryService.GetCategoryById(id);
+                if (Category == null) return NotFound();
+                return Ok(Category);
             }
             catch (Exception e)
             {
@@ -37,11 +33,11 @@ namespace WebAPI.Controllers
             }
         }
         [HttpGet]
-        public IActionResult GetCity([FromQuery] String Name, [FromQuery] DefaultSearch defaultSearch)
+        public IActionResult GetCategory([FromQuery] String Name, [FromQuery] DefaultSearch defaultSearch)
         {
             try
             {
-                var list = _ICityService.GetAllCity();
+                var list = _ICategoryService.GetAllCategory();
                 if (!String.IsNullOrWhiteSpace(Name))
                 {
                     list = list.Where(_ => _.Name.ToLower().Contains(Name.ToLower()));
@@ -58,21 +54,21 @@ namespace WebAPI.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> CreateCity(String Name)
+        public async Task<IActionResult> CreateCategory(String Name)
         {
             try
             {
-                var City = new City
+                var Category = new Category
                 {
                     Name = Name
                 };
-                _ICityService.AddCity(City);
-                bool result = await _ICityService.SaveCity();
+                _ICategoryService.AddCategory(Category);
+                bool result = await _ICategoryService.SaveCategory();
                 if (!result)
                 {
-                    return BadRequest("Can not create City");
+                    return BadRequest("Can not create Category");
                 }
-                return StatusCode(201, new { Id = City.Id });
+                return StatusCode(201, new { Id = Category.Id });
             }
             catch (Exception e)
             {
@@ -81,21 +77,21 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCity(int Id, String Name)
+        public async Task<IActionResult> UpdateCategory(int Id, String Name)
         {
             try
             {
 
-                var City = _ICityService.GetCityById(Id);
-                if (City == null) return NotFound();
-                City.Name = Name;
-                _ICityService.UpdateCity(City);
-                bool result = await _ICityService.SaveCity();
+                var Category = _ICategoryService.GetCategoryById(Id);
+                if (Category == null) return NotFound();
+                Category.Name = Name;
+                _ICategoryService.UpdateCategory(Category);
+                bool result = await _ICategoryService.SaveCategory();
                 if (!result)
                 {
-                    return BadRequest("Can not update City");
+                    return BadRequest("Can not update Category");
                 }
-                return Ok(City);
+                return Ok(Category);
             }
             catch (Exception e)
             {
@@ -105,14 +101,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCity(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
             try
             {
-                var City = _ICityService.GetCityById(id);
-                if (City == null) return NotFound();
-                _ICityService.DeleteCity(City);
-                await _ICityService.SaveCity();
+                var Category = _ICategoryService.GetCategoryById(id);
+                if (Category == null) return NotFound();
+                _ICategoryService.DeleteCategory(Category);
+                await _ICategoryService.SaveCategory();
                 return Ok();
             }
             catch (Exception e)

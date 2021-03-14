@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Http.Features;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using System.IO;
+using Sgw.KebabCaseRouteTokens;
 
 namespace WebAPI
 {
@@ -86,12 +87,28 @@ namespace WebAPI
             services.AddTransient<IPassService, PassService>();
             #endregion
 
-            services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddRouting(option => { option.LowercaseUrls = true; });
+            //services.AddControllers(options =>
+            //{
+            //    options
+            //        .Conventions
+            //        .Add(new KebabCaseRouteTokenReplacementControllerModelConvention());
+
+            //    var methodNamePrefixes = new string[]
+            //    {
+            //    "Create", "Delete", "Update", "Get", "Find",""
+            //    };
+
+            //    options
+            //        .Conventions
+            //        .Add(new KebabCaseRouteTokenReplacementActionModelConvention(methodNamePrefixes));
+            //});
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddCors(options => options.AddDefaultPolicy(
-                builder => builder.AllowAnyOrigin()));
+            services.AddCors(options => options.AddPolicy("AllowAll", builder =>
+                builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()
+            ));
 
             var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "firebase_admin_sdk.json");
 
@@ -145,7 +162,7 @@ namespace WebAPI
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors("AllowAll");
 
             app.UseAuthentication();
 

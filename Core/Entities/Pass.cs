@@ -11,7 +11,8 @@ namespace Core.Entities
         public decimal Price { get; set; }
         public bool IsSelling { get; set; }
         public int ExpireDuration { get; set; }
-        
+        public DateTime CreateAt { get; set; }
+
         public Pass PassChildren { get; set; }
 
         public virtual ICollection<UserPass> UserPasses { get; set; }

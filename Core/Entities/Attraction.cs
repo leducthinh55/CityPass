@@ -13,6 +13,7 @@ namespace Core.Entities
         public String Description { get; set; }
         public String Address { get; set; }
         public Boolean IsTemporarityClosed { get; set; }
+        public DateTime CreateAt { get; set; }
 
         public virtual ICollection<TicketType> TicketTypes { get; set; }
 
@@ -20,7 +21,7 @@ namespace Core.Entities
 
         public int CityId { get; set; }
         public City City { get; set; }
-        
+
         public int CategoryId { get; set; }
         public Category Category { get; set; }
     }

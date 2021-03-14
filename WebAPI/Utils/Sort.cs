@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Utils
 {
-    public static class GenericSorter<T>
+    public static class GenericSorter
     {
-        public static IQueryable<T> Sort(IQueryable<T> source, string sortBy, int sortDir = -1)
+        public static IQueryable<T> Sort<T>(IQueryable<T> source, string sortBy, int sortDir = -1)
         {
             var param = Expression.Parameter(typeof(T), "item");
 
@@ -20,6 +20,15 @@ namespace WebAPI.Utils
                 return source.OrderByDescending<T, object>(sortExpression);
             }
             return source.OrderBy<T, object>(sortExpression);
+        }
+
+        public static IOrderedQueryable<T> Sort<T, TKey>(this IQueryable<T> source, Expression<Func<T, TKey>> keySelector, int sortDir)
+        {
+            if (sortDir == -1)
+            {
+                return source.OrderByDescending(keySelector);
+            }
+            return source.OrderBy(keySelector);
         }
     }
 }

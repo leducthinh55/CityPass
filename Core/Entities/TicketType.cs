@@ -9,6 +9,9 @@ namespace Core.Entities
         public String Name { get; set; }
         public decimal? AdultPrice { get; set; }
         public decimal? ChildrenPrice { get; set; }
+        public DateTime CreateAt { get; set; }
+        public String UrlImage { get; set; }
+        public bool IsDelete { get; set; }
 
         public virtual ICollection<Ticket> Tickets { get; set; }
 

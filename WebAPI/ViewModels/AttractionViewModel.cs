@@ -10,6 +10,7 @@ namespace WebAPI.ViewModels
     {
         public String Name { get; set; }
         public String City { get; set; }
+        public String Category { get; set; }
         public Boolean? IsTemporarityClosed { get; set; } 
     }
 
@@ -21,6 +22,7 @@ namespace WebAPI.ViewModels
         public String Address { get; set; }
         public Boolean IsTemporarityClosed { get; set; } = false;
         public String City { get; set; }
+        public String Category { get; set; }
     }
     
     public class AttractionCM
@@ -33,12 +35,8 @@ namespace WebAPI.ViewModels
         public int CategoryId { get; set; }
     }
 
-    public class AttractionUM
+    public class AttractionUM : AttractionCM
     {
         public int Id { get; set; }
-        public String Name { get; set; }
-        public String Description { get; set; }
-        public String Address { get; set; }
-        public Boolean IsTemporarityClosed { get; set; } = false;
     }
 }
