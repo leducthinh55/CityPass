@@ -81,6 +81,12 @@ namespace WebAPI.Controllers
                     case "city":
                         list = GenericSorter.Sort(list, _ => _.Atrraction.City.Name, defaultSearch.SortDir);
                         break;
+                    case "adultPrice":
+                        list = GenericSorter.Sort(list, _ => _.AdultPrice, defaultSearch.SortDir);
+                        break;
+                    case "childrenPrice":
+                        list = GenericSorter.Sort(list, _ => _.ChildrenPrice, defaultSearch.SortDir);
+                        break;
                     default:
                         list = GenericSorter.Sort(list, _ => _.CreateAt, defaultSearch.SortDir);
                         break;

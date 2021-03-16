@@ -19,6 +19,8 @@ namespace Infrastructure.Infrastructure
 
         void Add(T entity);
 
+        void AddRange(IEnumerable<T> list);
+
         void Delete(T entity);
 
         void Delete(Expression<Func<T, bool>> where);
@@ -51,12 +53,22 @@ namespace Infrastructure.Infrastructure
 
         public virtual T GetById(Tkey Id)
         {
-            return dbSet.Find(Id);
+            var entity = dbSet.Find(Id);
+            if(entity != null)
+            {
+                _context.Entry(entity).State = EntityState.Detached;
+            }
+            return entity;
         }
 
         public virtual void Add(T entity)
         {
             dbSet.Add(entity);
+        }
+
+        public void AddRange(IEnumerable<T> list)
+        {
+            _context.AddRange(list);
         }
 
         public virtual void Delete(T entity)
@@ -99,5 +111,7 @@ namespace Infrastructure.Infrastructure
         {
             return await _context.Commit();
         }
+
+        
     }
 }

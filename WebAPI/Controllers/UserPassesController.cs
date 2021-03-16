@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Service;
+using WebAPI.Utils;
+using WebAPI.ViewModels;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[Controller]")]
+    [Route("api/user-passes")]
     public class UserPassesController : Controller
     {
         private readonly IUserPassService _iUserPassService;
@@ -16,47 +20,193 @@ namespace WebAPI.Controllers
         private readonly ITicketTypeService _iTicketTypeService;
         private readonly ICollectionService _iCollectionService;
         private readonly IPassService _iPassService;
+        private readonly IMapper _mapper;
         public UserPassesController(IUserPassService iUserPassService,
             ITicketService iTicketService,
             ITicketTypeService iTicketTypeService,
             ICollectionService iCollectionService,
-            IPassService iPassService)
+            IPassService iPassService,
+            IMapper mapper)
         {
             _iUserPassService = iUserPassService;
             _iTicketService = iTicketService;
             _iTicketTypeService = iTicketTypeService;
             _iCollectionService = iCollectionService;
             _iPassService = iPassService;
+            _mapper = mapper;
         }
-        [HttpGet]
-        public IActionResult CheckUserPassValid(Guid UserPassId, Guid TicketTypeId)
+        //[HttpGet("check-user-pass-valid")]
+        //public IActionResult CheckUserPassValid(Guid UserPassId, Guid TicketTypeId)
+        //{
+        //    var userPass = _iUserPassService.GetUserPassById(UserPassId);
+        //    if(userPass == null || userPass.WillExpireAt >= DateTime.Now)
+        //    {
+        //        return BadRequest(false);
+        //    }
+        //    var pass = _iPassService.GetPassById(userPass.PassId);
+        //    var tickets = _iTicketService.GetAllTicket(_ => _.UserPassId == UserPassId).Select(_ => _.TicketTypeId).ToList();
+        //    var collections = _iCollectionService.GetAllCollection(_ => _.PassId == pass.Id, _ => _.TicketTypeInCollections).ToList();
+        //    bool checkExisted = false;
+        //    for(int i = 0; i< collections.Count; i++)
+        //    {
+        //        var collectionTypeInCollections = collections[i].TicketTypeInCollections.ToList();
+        //        int maxConstrain = collections[i].MaxConstrain;
+        //        collectionTypeInCollections.ForEach(c =>
+        //        {
+        //            if(c.TicketTypeId == TicketTypeId)
+        //            {
+        //                checkExisted = true;
+        //            }
+        //        });
+        //    }
+        //    if(!checkExisted)
+        //    {
+        //        return Ok(false);
+        //    }
+        //    return Ok();
+        //}
+        [HttpGet("check-user-pass-valid")]
+        public async Task<IActionResult> CheckUserPassValid(Guid UserPassId, Guid TicketTypeId)
         {
-            var userPass = _iUserPassService.GetUserPassById(UserPassId);
-            if(userPass == null || userPass.WillExpireAt >= DateTime.Now)
+            try
             {
+                var userPass = _iUserPassService.GetUserPassById(UserPassId);
+                if (userPass == null)
+                {
+                    return BadRequest(false);
+                }
+                if(userPass.WillExpireAt >= DateTime.Now)
+                {
+                    return Ok(false);
+                }
+                var ticket = _iTicketService
+                    .GetAllTicket(_ => _.UserPassId == userPass.Id && _.TicketTypeId == TicketTypeId && _.UsedAt == null)
+                    .FirstOrDefault();
+                if (ticket != null)
+                {
+                    ticket.UsedAt = DateTime.Now;
+                    _iTicketService.UpdateTicket(ticket);
+                    await _iTicketService.SaveTicket();
+                    return Ok(true);
+                }
                 return BadRequest(false);
             }
-            var pass = _iPassService.GetPassById(userPass.PassId);
-            var tickets = _iTicketService.GetAllTicket(_ => _.UserPassId == UserPassId).Select(_ => _.TicketTypeId).ToList();
-            var collections = _iCollectionService.GetAllCollection(_ => _.PassId == pass.Id, _ => _.TicketTypeInCollections).ToList();
-            bool checkExisted = false;
-            for(int i = 0; i< collections.Count; i++)
+            catch (Exception e)
             {
-                var collectionTypeInCollections = collections[i].TicketTypeInCollections.ToList();
-                int maxConstrain = collections[i].MaxConstrain;
-                collectionTypeInCollections.ForEach(c =>
+                return BadRequest(e);
+            }           
+        }
+        [HttpGet("use-history")]
+        public IActionResult GetHistory(Guid userPassId)
+        {
+            try
+            {
+                var userPass = _iUserPassService.GetUserPassById(userPassId);
+                var userPassVM = _mapper.Map<UserPassVM>(userPass);
+                var ticket = _iTicketService.GetAllTicket(_ => _.UserPassId == userPassId).ToList();
+                var ticketUsed = ticket.Where(_ => _.UsedAt != null).ToList();
+                var ticketInUse = ticket.Where(_ => _.UsedAt == null).ToList();
+                userPassVM.ticketUsed = ticketUsed;
+                userPassVM.ticketInUse = ticketInUse;
+                return Ok(userPassVM);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("user-pass-avaiable")]
+        public IActionResult GetUserPassAvaiable(String uId)
+        {
+            try
+            {
+                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId);
+                var listAvaiable = list.Where(_ => _.WillExpireAt > DateTime.Now).ToList();
+                return Ok(listAvaiable);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("user-pass-expire")]
+        public IActionResult GetUserPassExpire(String uId)
+        {
+            try
+            {
+                var listExpire = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt < DateTime.Now && _.UsingTickets.Select(_ => _.UsedAt).Contains(null)).ToList();
+                return Ok(listExpire);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("user-pass-used")]
+        public IActionResult GetUserPassUsed(String uId)
+        {
+            try
+            {
+                //var a = _iUserPassService.GetAllUserPass(_ => _.UsingTickets.Select(_ => _.UsedAt.Value).Contains(null)).ToList();
+                var listUsed = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && (_.UsingTickets.Select(_ => _.UsedAt).Contains(null))).ToList(); 
+                return Ok(listUsed);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUserPass(UserPassCM userPassCM)
+        {
+            try
+            {              
+                var userPass = _mapper.Map<UserPass>(userPassCM);
+                var pass = _iPassService.GetPassById(userPassCM.PassId);
+                if(pass == null)
                 {
-                    if(c.TicketTypeId == TicketTypeId)
+                    return NotFound("User Pass not found");
+                }
+                userPass.BoughtAt = DateTime.Now;
+                userPass.WillExpireAt = DateTime.Now.AddDays(pass.ExpireDuration);
+
+                userPassCM.UserPassDetailCMs.ForEach(_ =>
+                {
+                    for (int i = 0; i < _.Quantity; i++)
                     {
-                        checkExisted = true;
+                        List<Ticket> listTicketType = new List<Ticket>();
+                        var userPassAdd = CloneGeneric.Clone<UserPass>(userPass);
+                        userPassAdd.IsChildren = _.IsChildren;
+                        userPassAdd.PriceWhenBought = _.IsChildren ? pass.ChildrenPrice : pass.Price;
+                        _iUserPassService.AddUserPass(userPassAdd);
+                        userPassCM.TicketTypeIds.ForEach(_ =>
+                        {
+                            listTicketType.Add(new Ticket()
+                            {
+                                TicketTypeId = _,
+                                UserPassId = userPassAdd.Id
+                            });
+                        });
+                        _iTicketService.AddRangeTicket(listTicketType);
                     }
                 });
+
+                var result = await _iUserPassService.SaveUserPass();
+                if (!result)
+                {
+                    return BadRequest("Can not create user pass");
+                }
+                return StatusCode(201);
             }
-            if(!checkExisted)
+            catch (Exception e)
             {
-                return Ok(false);
+                return BadRequest(e.Message);
             }
-            return Ok();
         }
+
     }
 }

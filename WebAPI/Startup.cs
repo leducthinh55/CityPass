@@ -85,24 +85,12 @@ namespace WebAPI
 
             services.AddTransient<IPassRepository, PassRepository>();
             services.AddTransient<IPassService, PassService>();
+            
+            services.AddTransient<ITicketTypeInCollectionRepository, TicketTypeInCollectionRepository>();
+            services.AddTransient<ITicketTypeInCollectionService, TicketTypeInCollectionService>();
             #endregion
 
             services.AddRouting(option => { option.LowercaseUrls = true; });
-            //services.AddControllers(options =>
-            //{
-            //    options
-            //        .Conventions
-            //        .Add(new KebabCaseRouteTokenReplacementControllerModelConvention());
-
-            //    var methodNamePrefixes = new string[]
-            //    {
-            //    "Create", "Delete", "Update", "Get", "Find",""
-            //    };
-
-            //    options
-            //        .Conventions
-            //        .Add(new KebabCaseRouteTokenReplacementActionModelConvention(methodNamePrefixes));
-            //});
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 

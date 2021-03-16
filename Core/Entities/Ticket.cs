@@ -6,7 +6,7 @@ namespace Core.Entities
 {
     public class Ticket : BaseEntity
     {
-        public DateTime UsedAt { get; set; }
+        public DateTime? UsedAt { get; set; }
 
         public Guid UserPassId { get; set; }
         public UserPass UserPass { get; set; }

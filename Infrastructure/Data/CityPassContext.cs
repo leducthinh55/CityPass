@@ -28,6 +28,7 @@ namespace Infrastructure.Data
         public DbSet<UserPass> UserPass { get; set; }
         public DbSet<Ticket> Ticket { get; set; }
         public DbSet<WorkingTime> WorkingTime { get; set; }
+        public DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -57,13 +58,15 @@ namespace Infrastructure.Data
             builder.Entity<UserPass>().Property(_ => _.Feedback).HasMaxLength(1000);
             builder.Entity<UserPass>().Property(_ => _.Rate);
 
-            builder.Entity<Ticket>().Property(_ => _.UsedAt).IsRequired();
+            
 
             builder.Entity<WorkingTime>().Property(_ => _.DayOfWeek).IsRequired();
             builder.Entity<WorkingTime>().Property(_ => _.StartTime).IsRequired();
             builder.Entity<WorkingTime>().Property(_ => _.EndTime).IsRequired();
 
             builder.Entity<TicketTypeInCollection>().HasKey(_ => new { _.TicketTypeId, _.CollectionId });
+
+            //builder.Entity<User>().HasMany<UserPass>().WithOne(_ => _.User).HasForeignKey(_ => _.Uid); 
 
             base.OnModelCreating(builder);
         }

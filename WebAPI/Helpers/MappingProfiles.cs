@@ -25,6 +25,22 @@ namespace WebAPI.Helpers
                 act => act.MapFrom(src => src.Atrraction.City.Name))
                 .ForMember(des => des.Atrraction,
                 act => act.MapFrom(src => src.Atrraction.Name));
+
+            CreateMap<Pass, PassVM>()
+                .ForMember(des => des.Collections,
+                src => src.Ignore());
+
+            CreateMap<PassCM, Pass>()
+                .ForMember(des => des.Collections,
+                src => src.Ignore());
+
+            CreateMap<Collection, CollectionVM>()
+                .ForMember(des => des.TicketTypes,
+                src => src.Ignore());
+
+            CreateMap<UserPass, UserPassVM>();
+            CreateMap<UserPassCM, UserPass>();
+
         }
     }
 }

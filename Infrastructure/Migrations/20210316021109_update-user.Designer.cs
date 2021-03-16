@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(CityPassContext))]
-    partial class CityPassContextModelSnapshot : ModelSnapshot
+    [Migration("20210316021109_update-user")]
+    partial class updateuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,7 +275,10 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Rate")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserUid")
+                    b.Property<string>("Uid")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserUid1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("WillExpireAt")
@@ -283,7 +288,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PassId");
 
-                    b.HasIndex("UserUid");
+                    b.HasIndex("Uid");
+
+                    b.HasIndex("UserUid1");
 
                     b.ToTable("UserPass");
                 });
@@ -386,8 +393,12 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("Uid");
+
+                    b.HasOne("Core.Entities.User", null)
                         .WithMany("UserPasses")
-                        .HasForeignKey("UserUid");
+                        .HasForeignKey("UserUid1");
                 });
 
             modelBuilder.Entity("Core.Entities.WorkingTime", b =>

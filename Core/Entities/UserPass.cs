@@ -11,10 +11,14 @@ namespace Core.Entities
         public String Feedback { get; set; }
         public decimal PriceWhenBought { get; set; }
         public int Rate { get; set; }
+        public bool IsChildren { get; set; }
 
         public virtual ICollection<Ticket> UsingTickets { get; set; }
 
         public Guid PassId { get; set; }
         public Pass Pass { get; set; }
+
+        public String UserUid { get; set; }
+        public User User { get; set; }
     }
 }

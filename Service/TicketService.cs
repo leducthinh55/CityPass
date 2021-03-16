@@ -14,6 +14,7 @@ namespace Service
     public interface ITicketService
     {
         void AddTicket(Ticket Ticket);
+        void AddRangeTicket(IEnumerable<Ticket> Tickets);
         void UpdateTicket(Ticket Ticket);
         void DeleteTicket(Expression<Func<Ticket, bool>> where);
         void DeleteTicket(Ticket Ticket);
@@ -75,6 +76,11 @@ namespace Service
         public void DeleteTicket(Ticket Ticket)
         {
             _iRespository.Delete(Ticket);
+        }
+
+        public void AddRangeTicket(IEnumerable<Ticket> Tickets)
+        {
+            _iRespository.AddRange(Tickets);
         }
     }
 }

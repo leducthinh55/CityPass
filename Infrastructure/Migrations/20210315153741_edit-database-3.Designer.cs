@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(CityPassContext))]
-    partial class CityPassContextModelSnapshot : ModelSnapshot
+    [Migration("20210315153741_edit-database-3")]
+    partial class editdatabase3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,16 +240,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("TicketTypeInCollection");
                 });
 
-            modelBuilder.Entity("Core.Entities.User", b =>
-                {
-                    b.Property<string>("Uid")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Uid");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("Core.Entities.UserPass", b =>
                 {
                     b.Property<Guid>("Id")
@@ -273,17 +265,12 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Rate")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserUid")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("WillExpireAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PassId");
-
-                    b.HasIndex("UserUid");
 
                     b.ToTable("UserPass");
                 });
@@ -384,10 +371,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("PassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Core.Entities.User", "User")
-                        .WithMany("UserPasses")
-                        .HasForeignKey("UserUid");
                 });
 
             modelBuilder.Entity("Core.Entities.WorkingTime", b =>

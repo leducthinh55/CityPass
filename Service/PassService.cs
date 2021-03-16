@@ -2,6 +2,8 @@
 using Infrastructure.Infrastructure;
 using Infrastructure.Repositories;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ namespace Service
     public interface IPassService
     {
         void AddPass(Pass Pass);
+        void AddRangePass(IEnumerable<Pass> Passes);
         void UpdatePass(Pass Pass);
         void DeletePass(Expression<Func<Pass, bool>> where);
         void DeletePass(Pass Pass);
@@ -73,6 +76,11 @@ namespace Service
         public void DeletePass(Pass Pass)
         {
             _iRespository.Delete(Pass);
+        }
+
+        public void AddRangePass(IEnumerable<Pass> Passes)
+        {
+            _iRespository.AddRange(Passes);
         }
     }
 }
