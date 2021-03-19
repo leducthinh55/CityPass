@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var TicketType = _ITicketTypeService.GetAllTicketType(_ => _.Id == id, _ => _.Atrraction, _ => _.Atrraction.City);
+                var TicketType = _ITicketTypeService.GetAllTicketType(_ => _.Id == id, _ => _.Atrraction, _ => _.Atrraction.City).FirstOrDefault();
                 if (TicketType == null) return NotFound();
                 return Ok(TicketType);
             }
@@ -50,9 +50,9 @@ namespace WebAPI.Controllers
                 {
                     list = list.Where(_ => _.Name.ToLower().Contains(ticketType.Name.ToLower()));
                 }
-                if (!String.IsNullOrWhiteSpace(ticketType.Atrraction))
+                if (!String.IsNullOrWhiteSpace(ticketType.Attraction))
                 {
-                    list = list.Where(_ => _.Atrraction.Name.ToLower().Contains(ticketType.Atrraction.ToLower()));
+                    list = list.Where(_ => _.Atrraction.Name.ToLower().Contains(ticketType.Attraction.ToLower()));
                 } 
                 if (!String.IsNullOrWhiteSpace(ticketType.City))
                 {
@@ -60,14 +60,7 @@ namespace WebAPI.Controllers
                 }
                 if(ticketType.PriceFrom != 0 && ticketType.PriceTo != 0)
                 {
-                    if(ticketType.PriceType == (int)PriceType.Adult)
-                    {
-                        list = list.Where(_ => _.AdultPrice >= ticketType.PriceFrom && _.AdultPrice <= ticketType.PriceTo);
-                    }
-                    else
-                    {
-                        list = list.Where(_ => _.ChildrenPrice >= ticketType.PriceFrom && _.ChildrenPrice <= ticketType.PriceTo);
-                    }
+                    list = list.Where(_ => _.AdultPrice >= ticketType.PriceFrom && _.AdultPrice <= ticketType.PriceTo);
                 }
                 int total = list.Count();
                 switch (defaultSearch.SortBy)

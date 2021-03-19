@@ -11,10 +11,9 @@ namespace WebAPI.ViewModels
         public String Name { get; set; }
         public decimal PriceFrom { get; set; } = 0;
         public decimal PriceTo { get; set; } = Decimal.MaxValue;
-        public int PriceType { get; set; }
         public bool IsDelete { get; set; } = false;
         public String UrlImage { get; set; }
-        public String Atrraction { get; set; }
+        public String Attraction { get; set; }
         public String City { get; set; }
     }
     public class TicketTypeCM

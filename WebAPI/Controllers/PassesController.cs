@@ -99,11 +99,16 @@ namespace WebAPI.Controllers
 
 
                 var list = new List<Pass>();
+                var listCollection = new List<Collection>();
                 collectionId.ForEach(id =>
                 {
-                    list.AddRange(_iPassService.GetAllPass(_ => _.Collections.Select(_ => _.Id).Contains(id)).ToList());
+                    listCollection.Add(_iCollectionService.GetCollectionById(id));
                 });
-                list = list.Distinct().ToList();
+                var listPassId = listCollection.GroupBy(_ => _.PassId).Select(_ => _.Key).ToList();
+                listPassId.ForEach(id =>
+                {
+                    list.Add(_iPassService.GetPassById(id));
+                });
 
                 list = list.Where(_ => _.Name.ToLower().Contains(name.ToLower())).ToList();
 

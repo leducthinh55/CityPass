@@ -75,7 +75,7 @@ namespace WebAPI.Controllers
                 {
                     return BadRequest(false);
                 }
-                if(userPass.WillExpireAt >= DateTime.Now)
+                if (userPass.WillExpireAt >= DateTime.Now)
                 {
                     return Ok(false);
                 }
@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
             catch (Exception e)
             {
                 return BadRequest(e);
-            }           
+            }
         }
         [HttpGet("use-history")]
         public IActionResult GetHistory(Guid userPassId)
@@ -121,9 +121,26 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId);
-                var listAvaiable = list.Where(_ => _.WillExpireAt > DateTime.Now).ToList();
-                return Ok(listAvaiable);
+                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt > DateTime.Now, _ => _.UsingTickets).ToList();
+                for (int i = list.Count - 1; i > -1; i--)
+                {
+                    var userPass = list[i];
+                    bool check = true;
+                    for (int j = 0; j < userPass.UsingTickets.Count; j++)
+                    {
+                        var ticket = userPass.UsingTickets.ToList()[j];
+                        if (ticket.UsedAt == null)
+                        {
+                            check = false;
+                        }
+                    }
+                    userPass.UsingTickets = null;
+                    if (check)
+                    {
+                        list.RemoveAt(i);
+                    }
+                }
+                return Ok(list);
             }
             catch (Exception e)
             {
@@ -136,23 +153,28 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var listExpire = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt < DateTime.Now && _.UsingTickets.Select(_ => _.UsedAt).Contains(null)).ToList();
-                return Ok(listExpire);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
-        }
-
-        [HttpGet("user-pass-used")]
-        public IActionResult GetUserPassUsed(String uId)
-        {
-            try
-            {
-                //var a = _iUserPassService.GetAllUserPass(_ => _.UsingTickets.Select(_ => _.UsedAt.Value).Contains(null)).ToList();
-                var listUsed = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && (_.UsingTickets.Select(_ => _.UsedAt).Contains(null))).ToList(); 
-                return Ok(listUsed);
+                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId, _ => _.UsingTickets).ToList();
+                var listExpire = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt < DateTime.Now).ToList();
+                for (int i = list.Count - 1; i > -1; i--)
+                {
+                    var userPass = list[i];
+                    bool check = true;
+                    for (int j = 0; j < userPass.UsingTickets.Count; j++)
+                    {
+                        var ticket = userPass.UsingTickets.ToList()[j];
+                        if (ticket.UsedAt != null)
+                        {
+                            check = false;
+                        }
+                    }
+                    userPass.UsingTickets = null;
+                    if (check)
+                    {
+                        list.RemoveAt(i);
+                    }
+                }
+                list.AddRange(listExpire);
+                return Ok(list);
             }
             catch (Exception e)
             {
@@ -164,10 +186,10 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> CreateUserPass(UserPassCM userPassCM)
         {
             try
-            {              
+            {
                 var userPass = _mapper.Map<UserPass>(userPassCM);
                 var pass = _iPassService.GetPassById(userPassCM.PassId);
-                if(pass == null)
+                if (pass == null)
                 {
                     return NotFound("User Pass not found");
                 }

@@ -95,20 +95,6 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpGet("get-all")]
-        public IActionResult GetAllAttraction()
-        {
-            try
-            {
-                var data = _IAtrractionService.GetAllAtrraction().ToList();
-                var total = data.Count;
-                return Ok(new { data, total });
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
         [HttpPost]
         public async Task<IActionResult> CreateAttraction(AttractionCM attractionCM)
         {

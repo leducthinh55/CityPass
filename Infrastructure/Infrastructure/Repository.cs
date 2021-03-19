@@ -90,7 +90,7 @@ namespace Infrastructure.Infrastructure
 
         public virtual IQueryable<T> GetAll()
         {
-            return dbSet;
+            return dbSet.AsNoTracking(); ;
         }
 
         public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] includes)
@@ -104,7 +104,7 @@ namespace Infrastructure.Infrastructure
             {
                 result = result.Include(expression);
             }
-            return result;
+            return result.AsNoTracking();
         }
 
         public virtual async Task<bool> Commit()

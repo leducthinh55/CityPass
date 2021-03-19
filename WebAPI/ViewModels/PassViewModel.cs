@@ -11,6 +11,8 @@ namespace WebAPI.ViewModels
         public Guid Id { get; set; }
         public String Name { get; set; }
         public String Description { get; set; }
+        public decimal ChildrenPrice { get; set; }
+        public String UrlImage { get; set; }
         public decimal Price { get; set; }
         public bool IsSelling { get; set; }
         public int ExpireDuration { get; set; }
@@ -19,18 +21,14 @@ namespace WebAPI.ViewModels
         
         public virtual ICollection<CollectionVM> Collections { get; set; }
     }
-    public class PassChildrenVM {
-        public Guid Id { get; set; }
-        public decimal Price { get; set; }
-    }
     public class PassCM
     {
         public String Name { get; set; }
         public String Description { get; set; }
         public decimal Price { get; set; }
-        public bool IsSelling { get; set; } = false;
+        public String UrlImage { get; set; }
         public int ExpireDuration { get; set; }
-        public decimal PassChildrenPrice { get; set; }
+        public decimal ChildrenPrice { get; set; }
 
         public virtual ICollection<CollectionCM> Collections { get; set; }
     }
@@ -41,9 +39,10 @@ namespace WebAPI.ViewModels
         public String Name { get; set; }
         public String Description { get; set; }
         public decimal Price { get; set; }
+        public String UrlImage { get; set; }
         public bool IsSelling { get; set; } = false;
         public int ExpireDuration { get; set; }
-        public decimal PassChildrenPrice { get; set; }
+        public decimal ChildrenPrice { get; set; }
 
         public virtual ICollection<CollectionUM> Collections { get; set; }
     }
