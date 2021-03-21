@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Routing;
 using Service;
 using WebAPI.Utils;
 using WebAPI.ViewModels;
-
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 namespace WebAPI.Controllers
 {
     [ApiController]
@@ -96,40 +97,38 @@ namespace WebAPI.Controllers
                         .Where(_ => _.TicketType.Id == ticketTypeId);
                 }
                 var collectionId = ticketTypeInCollection.GroupBy(_ => _.CollectionId).Select(_ => _.Key).ToList();
-
-
-                var list = new List<Pass>();
-                var listCollection = new List<Collection>();
-                collectionId.ForEach(id =>
-                {
-                    listCollection.Add(_iCollectionService.GetCollectionById(id));
-                });
-                var listPassId = listCollection.GroupBy(_ => _.PassId).Select(_ => _.Key).ToList();
-                listPassId.ForEach(id =>
-                {
-                    list.Add(_iPassService.GetPassById(id));
-                });
-
-                list = list.Where(_ => _.Name.ToLower().Contains(name.ToLower())).ToList();
+                //var list = new List<Pass>();
+                //var listCollection = new List<Collection>();
+                var listPassId = _iCollectionService.GetAllCollection(_ => collectionId.Contains(_.Id)).Select(_ => _.PassId).Distinct();
+                //collectionId.ForEach(id =>
+                //{
+                //    listCollection.Add(_iCollectionService.GetCollectionById(id));
+                //});
+                //var listPassId = listCollection.GroupBy(_ => _.PassId).Select(_ => _.Key).ToList();
+                //listPassId.ForEach(id =>
+                //{
+                //    list.Add(_iPassService.GetPassById(id));
+                //});
+                var list = _iPassService.GetAllPass(_ => listPassId.Contains(_.Id));
+                list = list.Where(_ => _.Name.ToLower().Contains(name.ToLower()));
 
                 if (priceFrom != 0 && priceTo != 0)
                 {
-                    list = list.Where(_ => _.Price >= priceFrom && _.Price <= priceTo).ToList();
+                    list = list.Where(_ => _.Price >= priceFrom && _.Price <= priceTo);
                 }
                 int total = list.ToList().Count();
-                var aa = _iPassService.GetAllPass().ToList();
                 if (defaultSearch.SortDir > 0)
                 {
                     switch (defaultSearch.SortBy)
                     {
                         case "name":
-                            list = list.OrderByDescending(_ => _.Name).ToList();
+                            list = list.OrderByDescending(_ => _.Name);
                             break;
                         case "price":
-                            list = list.OrderByDescending(_ => _.Price).ToList();
+                            list = list.OrderByDescending(_ => _.Price);
                             break;
                         default:
-                            list = list.OrderByDescending(_ => _.CreateAt).ToList();
+                            list = list.OrderByDescending(_ => _.CreateAt);
                             break;
                     }
                 }
@@ -138,27 +137,29 @@ namespace WebAPI.Controllers
                     switch (defaultSearch.SortBy)
                     {
                         case "name":
-                            list = list.OrderBy(_ => _.Name).ToList();
+                            list = list.OrderBy(_ => _.Name);
                             break;
                         case "price":
-                            list = list.OrderBy(_ => _.Price).ToList();
+                            list = list.OrderBy(_ => _.Price);
                             break;
                         default:
-                            list = list.OrderBy(_ => _.CreateAt).ToList();
+                            list = list.OrderBy(_ => _.CreateAt);
                             break;
                     }
                 }
                 list = list.Skip(defaultSearch.PageIndex)
-                    .Take(defaultSearch.PageSize)
-                    .ToList();
+                    .Take(defaultSearch.PageSize);
                 var data = new List<PassVM>();
-                list.ForEach(v =>
+                list.ToList().ForEach(v =>
                 {
-                    var userPasses = _iUserPassService.GetAllUserPass(_ => _.PassId == v.Id && _.Rate != 0);
-                    var totalRate = userPasses.Count();
-                    var rateSum = userPasses.Sum(_ => _.Rate);
+                    var pass = _iPassService.GetAllPass(_ => _.Id == v.Id).Include(_ => _.UserPasses).Include(_ => _.Collections).ThenInclude(_ => _.TicketTypeInCollections).FirstOrDefault();
+                    var userPassRate = pass.UserPasses.Where(_ => _.Rate != 0);
+                    var rateSum = userPassRate.Sum(_ => _.Rate);
+                    var totalRate = userPassRate.Count();
+                    var NumberOfTicketType = pass.Collections.Sum(_ => _.TicketTypeInCollections.Count);
                     var passVM = _mapper.Map<PassVM>(v);
                     passVM.Rate = totalRate != 0 ? (double)rateSum / (double)totalRate : 5;
+                    passVM.NumberOfTicketType = NumberOfTicketType;
                     data.Add(passVM);
                 });
                 return Ok(new { data, total });

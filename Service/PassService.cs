@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Infrastructure.Infrastructure;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -21,6 +23,7 @@ namespace Service
         Pass GetPassById(Guid Id);
         Pass GetPass(Expression<Func<Pass, bool>> where);
         IQueryable<Pass> GetAllPass(Expression<Func<Pass, bool>> where, params Expression<Func<Pass, object>>[] includes);
+        IQueryable<Pass> GetAllPass1(Expression<Func<Pass, bool>> where,Func<IQueryable<Pass>, IIncludableQueryable<Pass, object>> includes);
         IQueryable<Pass> GetAllPass();
         Task<bool> SavePass();
     }
@@ -81,6 +84,11 @@ namespace Service
         public void AddRangePass(IEnumerable<Pass> Passes)
         {
             _iRespository.AddRange(Passes);
+        }
+
+        public IQueryable<Pass> GetAllPass1(Expression<Func<Pass, bool>> where,Func<IQueryable<Pass>, IIncludableQueryable<Pass, object>> includes)
+        {
+            return _iRespository.GetAll(where, includes);
         }
     }
 }

@@ -7,6 +7,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using Core.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Infrastructure.Infrastructure
 {
@@ -29,6 +31,11 @@ namespace Infrastructure.Infrastructure
         IQueryable<T> GetAll(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] includes);
 
         IQueryable<T> GetAll();
+
+        IQueryable<T> GetAll(
+                                          Expression<Func<T, bool>> predicate = null,
+                                          Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null
+                                          );
 
         Task<bool> Commit();
     }
@@ -55,7 +62,7 @@ namespace Infrastructure.Infrastructure
         public virtual T GetById(Tkey Id)
         {
             var entity = dbSet.Find(Id);
-            if(entity != null)
+            if (entity != null)
             {
                 _context.Entry(entity).State = EntityState.Detached;
             }
@@ -91,7 +98,7 @@ namespace Infrastructure.Infrastructure
 
         public virtual IQueryable<T> GetAll()
         {
-            return dbSet.AsNoTracking(); ;
+            return dbSet.AsNoTracking();
         }
 
         public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] includes)
@@ -108,11 +115,29 @@ namespace Infrastructure.Infrastructure
             return result.AsNoTracking();
         }
 
+        public IQueryable<T> GetAll(
+                                          Expression<Func<T, bool>> predicate = null,
+                                          Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null
+                                          )
+        {
+            IQueryable<T> query = dbSet;
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+            return query;
+        }
+
         public virtual async Task<bool> Commit()
         {
             return await _context.Commit();
         }
 
-        
+
     }
 }

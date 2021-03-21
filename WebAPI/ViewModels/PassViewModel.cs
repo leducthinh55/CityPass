@@ -17,9 +17,11 @@ namespace WebAPI.ViewModels
         public bool IsSelling { get; set; }
         public int ExpireDuration { get; set; }
         public double Rate { get; set; }
+        public int NumberOfTicketType { get; set; }
         public virtual ICollection<String> Feedbacks { get; set; }
         
         public virtual ICollection<CollectionVM> Collections { get; set; }
+
     }
     public class PassCM
     {

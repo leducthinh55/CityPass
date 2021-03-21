@@ -20,12 +20,14 @@ namespace WebAPI.Controllers
         private readonly ITicketTypeService _iTicketTypeService;
         private readonly ICollectionService _iCollectionService;
         private readonly IPassService _iPassService;
+        private readonly IUserService _iUserService;
         private readonly IMapper _mapper;
         public UserPassesController(IUserPassService iUserPassService,
             ITicketService iTicketService,
             ITicketTypeService iTicketTypeService,
             ICollectionService iCollectionService,
             IPassService iPassService,
+            IUserService iUserService,
             IMapper mapper)
         {
             _iUserPassService = iUserPassService;
@@ -34,6 +36,7 @@ namespace WebAPI.Controllers
             _iCollectionService = iCollectionService;
             _iPassService = iPassService;
             _mapper = mapper;
+            _iUserService = iUserService;
         }
         
         [HttpGet("check-user-pass-valid")]
@@ -158,7 +161,13 @@ namespace WebAPI.Controllers
         {
             try
             {
+                var user = _iUserService.GetUserById(userPassCM.UserUid);
+                if(user == null)
+                {
+                    _iUserService.AddUser(new User() { Uid = userPassCM.UserUid });
+                }
                 var userPass = _mapper.Map<UserPass>(userPassCM);
+                userPass.UserUid = user.Uid;
                 var pass = _iPassService.GetPassById(userPassCM.PassId);
                 if (pass == null)
                 {

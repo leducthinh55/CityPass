@@ -88,6 +88,9 @@ namespace WebAPI
             
             services.AddTransient<ITicketTypeInCollectionRepository, TicketTypeInCollectionRepository>();
             services.AddTransient<ITicketTypeInCollectionService, TicketTypeInCollectionService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserService, UserService>();
             #endregion
 
             services.AddRouting(option => { option.LowercaseUrls = true; });

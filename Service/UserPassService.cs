@@ -8,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
-
 namespace Service
 {
     public interface IUserPassService
