@@ -117,6 +117,7 @@ namespace WebAPI.Controllers
                     list = list.Where(_ => _.Price >= priceFrom && _.Price <= priceTo).ToList();
                 }
                 int total = list.ToList().Count();
+                var aa = _iPassService.GetAllPass().ToList();
                 if (defaultSearch.SortDir > 0)
                 {
                     switch (defaultSearch.SortBy)

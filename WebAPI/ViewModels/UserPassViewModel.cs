@@ -21,17 +21,25 @@ namespace WebAPI.ViewModels
         public Pass Pass { get; set; }
     }
 
+    //public class UserPassCM
+    //{
+    //    public String UserUid { get; set; }
+    //    public List<UserPassDetailCM> UserPassDetailCMs { get; set; }
+    //    public Guid PassId { get; set; }
+    //    public List<Guid> TicketTypeIds { get; set; } 
+    //}
+
+    //public class UserPassDetailCM {
+    //    public bool IsChildren { get; set; }
+    //    public int Quantity { get; set; }
+    //}
+
     public class UserPassCM
     {
         public String UserUid { get; set; }
-        public List<UserPassDetailCM> UserPassDetailCMs { get; set; }
+        public int QuantiyChildren { get; set; }
+        public int QuantiyAdult { get; set; }
         public Guid PassId { get; set; }
-        public List<Guid> TicketTypeIds { get; set; } 
+        public List<Guid> TicketTypeIds { get; set; }
     }
-
-    public class UserPassDetailCM {
-        public bool IsChildren { get; set; }
-        public int Quantity { get; set; }
-    }
-
 }

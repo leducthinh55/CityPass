@@ -105,7 +105,10 @@ namespace WebAPI
                 Credential = GoogleCredential.FromFile(pathToKey)
             });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireClaim("admin"));
+            });
 
             services.AddAuthentication(options =>
             {

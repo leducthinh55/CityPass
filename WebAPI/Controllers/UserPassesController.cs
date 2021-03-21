@@ -35,36 +35,7 @@ namespace WebAPI.Controllers
             _iPassService = iPassService;
             _mapper = mapper;
         }
-        //[HttpGet("check-user-pass-valid")]
-        //public IActionResult CheckUserPassValid(Guid UserPassId, Guid TicketTypeId)
-        //{
-        //    var userPass = _iUserPassService.GetUserPassById(UserPassId);
-        //    if(userPass == null || userPass.WillExpireAt >= DateTime.Now)
-        //    {
-        //        return BadRequest(false);
-        //    }
-        //    var pass = _iPassService.GetPassById(userPass.PassId);
-        //    var tickets = _iTicketService.GetAllTicket(_ => _.UserPassId == UserPassId).Select(_ => _.TicketTypeId).ToList();
-        //    var collections = _iCollectionService.GetAllCollection(_ => _.PassId == pass.Id, _ => _.TicketTypeInCollections).ToList();
-        //    bool checkExisted = false;
-        //    for(int i = 0; i< collections.Count; i++)
-        //    {
-        //        var collectionTypeInCollections = collections[i].TicketTypeInCollections.ToList();
-        //        int maxConstrain = collections[i].MaxConstrain;
-        //        collectionTypeInCollections.ForEach(c =>
-        //        {
-        //            if(c.TicketTypeId == TicketTypeId)
-        //            {
-        //                checkExisted = true;
-        //            }
-        //        });
-        //    }
-        //    if(!checkExisted)
-        //    {
-        //        return Ok(false);
-        //    }
-        //    return Ok();
-        //}
+        
         [HttpGet("check-user-pass-valid")]
         public async Task<IActionResult> CheckUserPassValid(Guid UserPassId, Guid TicketTypeId)
         {
@@ -75,7 +46,7 @@ namespace WebAPI.Controllers
                 {
                     return BadRequest(false);
                 }
-                if (userPass.WillExpireAt >= DateTime.Now)
+                if (userPass.WillExpireAt < DateTime.Now)
                 {
                     return Ok(false);
                 }
@@ -196,27 +167,44 @@ namespace WebAPI.Controllers
                 userPass.BoughtAt = DateTime.Now;
                 userPass.WillExpireAt = DateTime.Now.AddDays(pass.ExpireDuration);
 
-                userPassCM.UserPassDetailCMs.ForEach(_ =>
+                List<UserPass> listAdd = new List<UserPass>();
+                var childrenPrice = pass.ChildrenPrice;
+                var adultPrice = pass.Price;
+                
+                for (int i = 0; i< userPassCM.QuantiyAdult; i++)
                 {
-                    for (int i = 0; i < _.Quantity; i++)
+                    UserPass passAdd = CloneGeneric.Clone<UserPass>(userPass);
+                    passAdd.IsChildren = false;
+                    passAdd.PriceWhenBought = adultPrice;
+                    _iUserPassService.AddUserPass(passAdd);
+                    List<Ticket> listTicketType = new List<Ticket>();
+                    userPassCM.TicketTypeIds.ForEach(_ =>
                     {
-                        List<Ticket> listTicketType = new List<Ticket>();
-                        var userPassAdd = CloneGeneric.Clone<UserPass>(userPass);
-                        userPassAdd.IsChildren = _.IsChildren;
-                        userPassAdd.PriceWhenBought = _.IsChildren ? pass.ChildrenPrice : pass.Price;
-                        _iUserPassService.AddUserPass(userPassAdd);
-                        userPassCM.TicketTypeIds.ForEach(_ =>
+                        listTicketType.Add(new Ticket()
                         {
-                            listTicketType.Add(new Ticket()
-                            {
-                                TicketTypeId = _,
-                                UserPassId = userPassAdd.Id
-                            });
+                            TicketTypeId = _,
+                            UserPassId = passAdd.Id
                         });
-                        _iTicketService.AddRangeTicket(listTicketType);
-                    }
-                });
-
+                    });
+                    _iTicketService.AddRangeTicket(listTicketType);
+                }
+                for (int i = 0; i < userPassCM.QuantiyChildren; i++)
+                {
+                    UserPass passAdd = CloneGeneric.Clone<UserPass>(userPass);
+                    passAdd.IsChildren = true;
+                    passAdd.PriceWhenBought = childrenPrice;
+                    _iUserPassService.AddUserPass(passAdd);
+                    List<Ticket> listTicketType = new List<Ticket>();
+                    userPassCM.TicketTypeIds.ForEach(_ =>
+                    {
+                        listTicketType.Add(new Ticket()
+                        {
+                            TicketTypeId = _,
+                            UserPassId = passAdd.Id
+                        });
+                    });
+                    _iTicketService.AddRangeTicket(listTicketType);
+                }
                 var result = await _iUserPassService.SaveUserPass();
                 if (!result)
                 {

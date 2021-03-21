@@ -51,15 +51,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("getRole")]
+        [Authorize]
         public async Task<IActionResult> GetRole(String uid)
         {
+            var User = HttpContext.User;
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
             var user = await auth.GetUserAsync(uid);
             return Ok(user);
         }
 
         [HttpGet("secrets")]
-        [Authorize]
+        [Authorize(Policy = "Admin")]
         public async Task<IEnumerable<string>> GetSecrets(String token)
         {
             var User = HttpContext.User;
