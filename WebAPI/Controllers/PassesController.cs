@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
                 pass.Collections.ToList().ForEach(_ =>
                 {
 
-                    var collection = _iCollectionService.GetAllCollection(_ => _.Id == _.Id, _ => _.TicketTypeInCollections).FirstOrDefault();
+                    var collection = _iCollectionService.GetAllCollection(v => v.Id == _.Id, v => v.TicketTypeInCollections).FirstOrDefault();
                     var collectionVM = _mapper.Map<CollectionVM>(collection);
                     collectionVM.TicketTypes = new List<TicketType>();
                     var ticketTypeInCollections = collection.TicketTypeInCollections;
@@ -147,7 +147,6 @@ namespace WebAPI.Controllers
                             break;
                     }
                 }
-
                 list = list.Skip(defaultSearch.PageIndex)
                     .Take(defaultSearch.PageSize)
                     .ToList();

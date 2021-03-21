@@ -24,7 +24,13 @@ namespace WebAPI.Helpers
                 .ForMember(des => des.City,
                 act => act.MapFrom(src => src.Atrraction.City.Name))
                 .ForMember(des => des.Atrraction,
-                act => act.MapFrom(src => src.Atrraction.Name));
+                act => act.MapFrom(src => src.Atrraction.Name))
+                .ForMember(des => des.IsNew,
+                act => act.MapFrom(src => src.CreateAt.AddMonths(1) > DateTime.Now))
+                .ForMember(des => des.NumberOfVisiter,
+                act => act.MapFrom(src => src.Tickets.Count))
+                .ForMember(des => des.UrlImage,
+                act => act.MapFrom(src => src.UrlImage != null ? src.UrlImage.Split(new char[] { ';'})[0] : ""));
 
             CreateMap<Pass, PassVM>()
                 .ForMember(des => des.Collections,
@@ -32,7 +38,9 @@ namespace WebAPI.Helpers
 
             CreateMap<PassCM, Pass>()
                 .ForMember(des => des.Collections,
-                src => src.Ignore());
+                src => src.Ignore())
+                .ForMember(des => des.CreateAt,
+                act => act.MapFrom(_ => DateTime.Now));
 
             CreateMap<Collection, CollectionVM>()
                 .ForMember(des => des.TicketTypes,

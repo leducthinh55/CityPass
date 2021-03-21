@@ -12,9 +12,9 @@ namespace WebAPI.ViewModels
         public decimal PriceFrom { get; set; } = 0;
         public decimal PriceTo { get; set; } = Decimal.MaxValue;
         public bool IsDelete { get; set; } = false;
-        public String UrlImage { get; set; }
         public String Attraction { get; set; }
         public String City { get; set; }
+        public int CategoryId { get; set; }
     }
     public class TicketTypeCM
     {
@@ -36,6 +36,8 @@ namespace WebAPI.ViewModels
         public String City { get; set; }
         public String Atrraction { get; set; }
         public bool IsDelete { get; set; }
+        public bool IsNew { get; set; }
+        public int NumberOfVisiter { get; set; }
     }
 
     public class TicketTypeUM

@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
                     ticket.UsedAt = DateTime.Now;
                     _iTicketService.UpdateTicket(ticket);
                     await _iTicketService.SaveTicket();
-                    return Ok(true);
+                    return Ok(ticket);
                 }
                 return BadRequest(false);
             }

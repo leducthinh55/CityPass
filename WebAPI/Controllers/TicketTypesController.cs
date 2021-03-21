@@ -20,10 +20,12 @@ namespace WebAPI.Controllers
     public class TicketTypesController : ControllerBase
     {
         private readonly ITicketTypeService _ITicketTypeService;
+        private readonly ITicketService _ITicketService;
         private readonly IMapper _mapper;
-        public TicketTypesController(ITicketTypeService ITicketTypeService, IMapper mapper)
+        public TicketTypesController(ITicketTypeService ITicketTypeService, IMapper mapper, ITicketService ITicketService)
         {
             _ITicketTypeService = ITicketTypeService;
+            _ITicketService = ITicketService;
             _mapper = mapper;
         }
         [HttpGet("{id}")]
@@ -45,7 +47,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var list = _ITicketTypeService.GetAllTicketType(_ => _.IsDelete == ticketType.IsDelete, _ => _.Atrraction, _ => _.Atrraction.City);
+                var list = _ITicketTypeService.GetAllTicketType(_ => _.IsDelete == ticketType.IsDelete, _ => _.Atrraction, _ => _.Atrraction.City, _ => _.Atrraction.Category, _ => _.Tickets);
                 if (!String.IsNullOrWhiteSpace(ticketType.Name))
                 {
                     list = list.Where(_ => _.Name.ToLower().Contains(ticketType.Name.ToLower()));
@@ -58,7 +60,11 @@ namespace WebAPI.Controllers
                 {
                     list = list.Where(_ => _.Atrraction.City.Name.ToLower().Contains(ticketType.City.ToLower()));
                 }
-                if(ticketType.PriceFrom != 0 && ticketType.PriceTo != 0)
+                if (ticketType.CategoryId != 0)
+                {
+                    list = list.Where(_ => _.Atrraction.Category.Id == ticketType.CategoryId);
+                }
+                if (ticketType.PriceFrom != 0 && ticketType.PriceTo != 0)
                 {
                     list = list.Where(_ => _.AdultPrice >= ticketType.PriceFrom && _.AdultPrice <= ticketType.PriceTo);
                 }
@@ -105,7 +111,8 @@ namespace WebAPI.Controllers
                     Name = ticketType.Name,
                     AdultPrice = ticketType.AdultPrice,
                     ChildrenPrice = ticketType.ChildrenPrice,
-                    AtrractionId = ticketType.AtrractionId
+                    AtrractionId = ticketType.AtrractionId,
+                    CreateAt = DateTime.Now
                 };
                 _ITicketTypeService.AddTicketType(TicketType);
                 bool result = await _ITicketTypeService.SaveTicketType();
