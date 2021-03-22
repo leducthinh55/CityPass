@@ -86,7 +86,7 @@ namespace Infrastructure.Infrastructure
 
         public virtual void Delete(Expression<Func<T, bool>> where)
         {
-            var listRemove = dbSet.Where(where);
+            var listRemove = dbSet.Where(where).ToList();
             dbSet.RemoveRange(listRemove);
         }
 

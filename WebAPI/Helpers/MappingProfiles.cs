@@ -41,6 +41,12 @@ namespace WebAPI.Helpers
                 src => src.Ignore())
                 .ForMember(des => des.CreateAt,
                 act => act.MapFrom(_ => DateTime.Now));
+            
+            CreateMap<PassUM, Pass>()
+                .ForMember(des => des.Collections,
+                src => src.Ignore())
+                .ForMember(des => des.CreateAt,
+                act => act.MapFrom(_ => DateTime.Now));
 
             CreateMap<Collection, CollectionVM>()
                 .ForMember(des => des.TicketTypes,

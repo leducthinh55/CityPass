@@ -210,8 +210,45 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var pass = _iPassService.GetAllPass().Where(_ => _.Id == passUM.Id).Include(_ => _.Collections).ThenInclude(_ => _.TicketTypeInCollections).FirstOrDefault();
-                
+
+                var passInDb = _iPassService.GetPassById(passUM.Id);
+                var pass = _mapper.Map<Pass>(passUM);
+                if (!passInDb.IsSelling)
+                {
+                    passInDb.Name = pass.Name;
+                    passInDb.Description = pass.Description;
+                    passInDb.Price = pass.Price;
+                    passInDb.ExpireDuration = pass.ExpireDuration;
+                    passInDb.ChildrenPrice = pass.ChildrenPrice;
+                    passInDb.UrlImage = pass.UrlImage;
+                    _iPassService.UpdatePass(passInDb);
+                    _iTicketTypeInCollectionService.DeleteTicketTypeInCollection(_ => _.Collection.PassId == passUM.Id);
+                    _iCollectionService.DeleteCollection(_ => _.PassId == passUM.Id);
+                    await _iPassService.SavePass();
+                }
+                else
+                {
+                    _iPassService.AddPass(pass);
+                }
+
+                passUM.Collections.ToList().ForEach(_ =>
+                {
+                    var collection = new Collection
+                    {
+                        MaxConstrain = _.MaxConstrain,
+                        PassId = pass.Id
+                    };
+                    _iCollectionService.AddCollection(collection);
+                    _.TicketTypeIds.ToList().ForEach(t =>
+                    {
+                        _iTicketTypeInCollectionService.AddTicketTypeInCollection(new TicketTypeInCollection()
+                        {
+                            TicketTypeId = t,
+                            CollectionId = collection.Id
+                        });
+                    });
+                });
+                await _iPassService.SavePass();
                 return Ok();
             }
             catch (Exception e)

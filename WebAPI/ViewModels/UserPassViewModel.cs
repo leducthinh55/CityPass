@@ -8,6 +8,7 @@ namespace WebAPI.ViewModels
 {
     public class UserPassVM
     {
+        public Guid Id { get; set; }
         public DateTime WillExpireAt { get; set; }
         public DateTime BoughtAt { get; set; }
         public String Feedback { get; set; }

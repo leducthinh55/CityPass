@@ -119,6 +119,7 @@ namespace WebAPI.Controllers
                     {
                         var userPassVm = _mapper.Map<UserPassVM>(userPass);
                         userPassVm.NumberOfUsed = used;
+                        userPassVm.Pass.UserPasses = null;
                         result.Add(userPassVm);
                     }   
                 }
@@ -191,6 +192,11 @@ namespace WebAPI.Controllers
                 var userPass = _mapper.Map<UserPass>(userPassCM);
                 userPass.UserUid = user.Uid;
                 var pass = _iPassService.GetPassById(userPassCM.PassId);
+                if(!pass.IsSelling)
+                {
+                    pass.IsSelling = true;
+                    _iPassService.UpdatePass(pass);
+                }
                 if (pass == null)
                 {
                     return NotFound("User Pass not found");
