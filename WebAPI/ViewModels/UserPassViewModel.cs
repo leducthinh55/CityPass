@@ -14,9 +14,10 @@ namespace WebAPI.ViewModels
         public decimal PriceWhenBought { get; set; }
         public int Rate { get; set; }
         public bool IsChildren { get; set; }
+        public int NumberOfUsed { get; set; }
 
-        public virtual ICollection<Ticket> ticketUsed { get; set; }
-        public virtual ICollection<Ticket> ticketInUse { get; set; }
+        public virtual ICollection<TicketVM> ticketUsed { get; set; }
+        public virtual ICollection<TicketVM> ticketInUse { get; set; }
 
         public Pass Pass { get; set; }
     }

@@ -77,9 +77,9 @@ namespace WebAPI.Controllers
             {
                 var userPass = _iUserPassService.GetUserPassById(userPassId);
                 var userPassVM = _mapper.Map<UserPassVM>(userPass);
-                var ticket = _iTicketService.GetAllTicket(_ => _.UserPassId == userPassId).ToList();
-                var ticketUsed = ticket.Where(_ => _.UsedAt != null).ToList();
-                var ticketInUse = ticket.Where(_ => _.UsedAt == null).ToList();
+                var ticket = _iTicketService.GetAllTicket(_ => _.UserPassId == userPassId, _ => _.TicketType);
+                var ticketUsed = ticket.Where(_ => _.UsedAt != null).Select(_ => _mapper.Map<TicketVM>(_)).ToList();
+                var ticketInUse = ticket.Where(_ => _.UsedAt == null).Select(_ => _mapper.Map<TicketVM>(_)).ToList();
                 userPassVM.ticketUsed = ticketUsed;
                 userPassVM.ticketInUse = ticketInUse;
                 return Ok(userPassVM);
@@ -95,26 +95,34 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt > DateTime.Now, _ => _.UsingTickets).ToList();
+                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt > DateTime.Now, _ => _.UsingTickets, _ => _.Pass).ToList();
+                var result = new List<UserPassVM>();
                 for (int i = list.Count - 1; i > -1; i--)
                 {
                     var userPass = list[i];
-                    bool check = true;
-                    for (int j = 0; j < userPass.UsingTickets.Count; j++)
+                    int used = 0;
+                    int total = userPass.UsingTickets.Count;
+                    for (int j = 0; j < total; j++)
                     {
                         var ticket = userPass.UsingTickets.ToList()[j];
-                        if (ticket.UsedAt == null)
+                        if (ticket.UsedAt != null)
                         {
-                            check = false;
+                            used++;
                         }
                     }
                     userPass.UsingTickets = null;
-                    if (check)
+                    if (used == total)
                     {
                         list.RemoveAt(i);
                     }
+                    else
+                    {
+                        var userPassVm = _mapper.Map<UserPassVM>(userPass);
+                        userPassVm.NumberOfUsed = used;
+                        result.Add(userPassVm);
+                    }   
                 }
-                return Ok(list);
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -149,6 +157,20 @@ namespace WebAPI.Controllers
                 }
                 list.AddRange(listExpire);
                 return Ok(list);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("history-ticket-check")]
+        public IActionResult GetHistoryTicketCheck(Guid ticketTypeId)
+        {
+            try
+            {
+                var Ticket = _iTicketService.GetAllTicket(_ => _.TicketTypeId == ticketTypeId && _.UsedAt.Value.Date == DateTime.Now.Date);
+                return Ok(Ticket);
             }
             catch (Exception e)
             {

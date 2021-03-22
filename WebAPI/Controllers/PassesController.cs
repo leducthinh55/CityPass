@@ -83,7 +83,8 @@ namespace WebAPI.Controllers
             try
             {
                 name = name ?? "";
-                var ticketTypeInCollection = _iTicketTypeInCollectionService.GetAllTicketTypeInCollection(null, _ => _.TicketType, _ => _.TicketType.Atrraction.City);
+                var ticketTypeInCollection = _iTicketTypeInCollectionService.GetAllTicketTypeInCollection(null, _ => _.TicketType.Atrraction.City);
+                var b = ticketTypeInCollection.ToList();
                 if (cityId != 0)
                 {
                     // get list collectionId where that collection belong to CityId
@@ -94,7 +95,8 @@ namespace WebAPI.Controllers
                 {
                     // get list collectionId where that collection belong to CityId
                     ticketTypeInCollection = ticketTypeInCollection
-                        .Where(_ => _.TicketType.Id == ticketTypeId);
+                        .Where(_ => _.TicketTypeId == ticketTypeId);
+                    var a = ticketTypeInCollection.ToList();
                 }
                 var collectionId = ticketTypeInCollection.GroupBy(_ => _.CollectionId).Select(_ => _.Key).ToList();
                 //var list = new List<Pass>();
@@ -208,7 +210,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-
+                var pass = _iPassService.GetAllPass().Where(_ => _.Id == passUM.Id).Include(_ => _.Collections).ThenInclude(_ => _.TicketTypeInCollections).FirstOrDefault();
+                
                 return Ok();
             }
             catch (Exception e)

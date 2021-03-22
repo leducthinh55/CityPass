@@ -23,7 +23,7 @@ namespace Service
         Pass GetPassById(Guid Id);
         Pass GetPass(Expression<Func<Pass, bool>> where);
         IQueryable<Pass> GetAllPass(Expression<Func<Pass, bool>> where, params Expression<Func<Pass, object>>[] includes);
-        IQueryable<Pass> GetAllPass1(Expression<Func<Pass, bool>> where,Func<IQueryable<Pass>, IIncludableQueryable<Pass, object>> includes);
+        IQueryable<Pass> GetAllPass(Expression<Func<Pass, bool>> where,Func<IQueryable<Pass>, IIncludableQueryable<Pass, object>> includes);
         IQueryable<Pass> GetAllPass();
         Task<bool> SavePass();
     }
@@ -86,7 +86,7 @@ namespace Service
             _iRespository.AddRange(Passes);
         }
 
-        public IQueryable<Pass> GetAllPass1(Expression<Func<Pass, bool>> where,Func<IQueryable<Pass>, IIncludableQueryable<Pass, object>> includes)
+        public IQueryable<Pass> GetAllPass(Expression<Func<Pass, bool>> where,Func<IQueryable<Pass>, IIncludableQueryable<Pass, object>> includes)
         {
             return _iRespository.GetAll(where, includes);
         }

@@ -68,14 +68,14 @@ namespace WebAPI.Controllers
                 {
                     list = list.Where(_ => _.Category.Name.ToLower() == attractionSM.Category.ToLower());
                 }
-                int total = list.ToList().Count();   
-                switch(defaultSearch.SortBy)
+                int total = list.ToList().Count();
+                switch (defaultSearch.SortBy)
                 {
                     case "name":
                         list = GenericSorter.Sort(list, _ => _.Name, defaultSearch.SortDir);
                         break;
                     case "category":
-                        list  = GenericSorter.Sort(list, _ => _.Category.Name, defaultSearch.SortDir);
+                        list = GenericSorter.Sort(list, _ => _.Category.Name, defaultSearch.SortDir);
                         break;
                     case "city":
                         list = GenericSorter.Sort(list, _ => _.City.Name, defaultSearch.SortDir);
@@ -100,10 +100,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var city = _ICityService.GetCityById(attractionCM.CityId);
+                var city = _ICityService.GetCity(_ => _.Name == attractionCM.CityName);
                 if (city == null)
                 {
-                    return BadRequest();
+                    city = new City() { Name = attractionCM.CityName };
+                    _ICityService.AddCity(city);
+                    await _ICityService.SaveCity();
                 }
 
                 var category = _ICategoryService.GetCategoryById(attractionCM.CategoryId);
@@ -112,6 +114,7 @@ namespace WebAPI.Controllers
                     return BadRequest();
                 }
                 var attraction = _mapper.Map<Attraction>(attractionCM);
+                attraction.CityId = city.Id;
                 attraction.CreateAt = DateTime.Now;
                 _IAtrractionService.AddAtrraction(attraction);
                 bool result = await _IAtrractionService.SaveAtrraction();
@@ -132,7 +135,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-
+                var city = _ICityService.GetCity(_ => _.Name == attractionUM.CityName);
+                if (city == null)
+                {
+                    city = new City() { Name = attractionUM.CityName };
+                    _ICityService.AddCity(city);
+                    await _ICityService.SaveCity();
+                }
                 var attraction = _IAtrractionService.GetAtrractionById(attractionUM.Id);
                 if (attraction == null) return NotFound();
                 attraction.Name = attractionUM.Name;
@@ -140,7 +149,9 @@ namespace WebAPI.Controllers
                 attraction.Description = attractionUM.Description;
                 attraction.IsTemporarityClosed = attractionUM.IsTemporarityClosed;
                 attraction.CategoryId = attractionUM.CategoryId;
-                attraction.CityId = attractionUM.CityId;
+                attraction.CityId = city.Id;
+                attraction.Lat = attractionUM.Lat;
+                attraction.Lng = attractionUM.Lng;
                 _IAtrractionService.UpdateAtrraction(attraction);
                 bool result = await _IAtrractionService.SaveAtrraction();
                 if (!result)

@@ -31,8 +31,10 @@ namespace WebAPI.ViewModels
         public String Description { get; set; }
         public String Address { get; set; }
         public Boolean IsTemporarityClosed { get; set; } = false;
-        public int CityId { get; set; }
+        public String CityName { get; set; }
         public int CategoryId { get; set; }
+        public Double Lat { get; set; }
+        public Double Lng { get; set; }
     }
 
     public class AttractionUM : AttractionCM

@@ -14,6 +14,8 @@ namespace Core.Entities
         public String Address { get; set; }
         public Boolean IsTemporarityClosed { get; set; }
         public DateTime CreateAt { get; set; }
+        public Double Lat { get; set; }
+        public Double Lng { get; set; }
 
         public virtual ICollection<TicketType> TicketTypes { get; set; }
 
