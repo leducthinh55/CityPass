@@ -12,7 +12,7 @@ using WebAPI.ViewModels;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/user-passes")]
+    [Route("api/v1.0/user-passes")]
     public class UserPassesController : Controller
     {
         private readonly IUserPassService _iUserPassService;

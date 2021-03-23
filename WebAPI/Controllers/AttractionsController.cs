@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Cors;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1.0/[controller]")]
     public class AttractionsController : Controller
     {
         private readonly IAtrractionService _IAtrractionService;

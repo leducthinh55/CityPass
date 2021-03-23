@@ -23,6 +23,8 @@ namespace WebAPI.ViewModels
         public Boolean IsTemporarityClosed { get; set; } = false;
         public String City { get; set; }
         public String Category { get; set; }
+        public Double Lat { get; set; }
+        public Double Lng { get; set; }
     }
     
     public class AttractionCM

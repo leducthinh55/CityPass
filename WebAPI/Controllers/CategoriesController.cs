@@ -9,7 +9,7 @@ using Core.Entities;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[Controller]")]
+    [Route("api/v1.0/[Controller]")]
     [ApiController]
     public class CategoriesController : Controller
     {

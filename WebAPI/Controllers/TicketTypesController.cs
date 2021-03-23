@@ -15,7 +15,7 @@ using WebAPI.Helpers;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/ticket-types")]
+    [Route("api/v1.0/ticket-types")]
     [ApiController]
     public class TicketTypesController : ControllerBase
     {

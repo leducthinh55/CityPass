@@ -18,7 +18,7 @@ using WebAPI.ViewModels;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[Controller]")]
+    [Route("api/v1.0/[Controller]")]
     public class AuthController : Controller
     {
         [HttpPost("verify")]
@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPost("updateRole")]
+        [HttpPost("update-role")]
         public async Task<IActionResult> UpdateRole(String uid)
         {
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
@@ -50,39 +50,39 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("getRole")]
-        [Authorize]
-        public async Task<IActionResult> GetRole(String uid)
-        {
-            var User = HttpContext.User;
-            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
-            var user = await auth.GetUserAsync(uid);
-            return Ok(user);
-        }
+        //[HttpPost("get-Role")]
+        //[Authorize]
+        //public async Task<IActionResult> GetRole(String uid)
+        //{
+        //    var User = HttpContext.User;
+        //    var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
+        //    var user = await auth.GetUserAsync(uid);
+        //    return Ok(user);
+        //}
 
-        [HttpGet("secrets")]
-        [Authorize(Policy = "Admin")]
-        public async Task<IEnumerable<string>> GetSecrets(String token)
-        {
-            var User = HttpContext.User;
-            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
-            try
-            {
-                var response = await auth.VerifyIdTokenAsync(token);
-                if (response != null)
-                    return null;
-            }
-            catch (FirebaseException ex)
-            {
-                return null;
-            }
-            return new List<string>()
-            {
-                "This is from the secret controller",
-                "Seeing this means you are authenticated",
-                "You have logged in using your google account from firebase",
-                "Have a nice day!!"
-            };
-        }
+        //[HttpGet("secrets")]
+        //[Authorize(Policy = "Admin")]
+        //public async Task<IEnumerable<string>> GetSecrets(String token)
+        //{
+        //    var User = HttpContext.User;
+        //    var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
+        //    try
+        //    {
+        //        var response = await auth.VerifyIdTokenAsync(token);
+        //        if (response != null)
+        //            return null;
+        //    }
+        //    catch (FirebaseException ex)
+        //    {
+        //        return null;
+        //    }
+        //    return new List<string>()
+        //    {
+        //        "This is from the secret controller",
+        //        "Seeing this means you are authenticated",
+        //        "You have logged in using your google account from firebase",
+        //        "Have a nice day!!"
+        //    };
+        //}
     }
 }

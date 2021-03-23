@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1.0/[controller]")]
     public class PassesController : Controller
     {
         private readonly IUserPassService _iUserPassService;
