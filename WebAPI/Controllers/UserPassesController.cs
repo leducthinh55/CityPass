@@ -76,6 +76,10 @@ namespace WebAPI.Controllers
             try
             {
                 var userPass = _iUserPassService.GetUserPassById(userPassId);
+                if(userPass == null)
+                {
+                    return NotFound();
+                }
                 var userPassVM = _mapper.Map<UserPassVM>(userPass);
                 var ticket = _iTicketService.GetAllTicket(_ => _.UserPassId == userPassId, _ => _.TicketType);
                 var ticketUsed = ticket.Where(_ => _.UsedAt != null).Select(_ => _mapper.Map<TicketVM>(_)).ToList();
