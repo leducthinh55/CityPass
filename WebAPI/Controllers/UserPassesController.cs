@@ -191,7 +191,8 @@ namespace WebAPI.Controllers
                 var user = _iUserService.GetUserById(userPassCM.UserUid);
                 if(user == null)
                 {
-                    _iUserService.AddUser(new User() { Uid = userPassCM.UserUid });
+                    user = new User() { Uid = userPassCM.UserUid };
+                    _iUserService.AddUser(user);
                 }
                 var userPass = _mapper.Map<UserPass>(userPassCM);
                 userPass.UserUid = user.Uid;
