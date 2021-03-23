@@ -55,6 +55,11 @@ namespace WebAPI.Helpers
             CreateMap<UserPass, UserPassVM>();
             CreateMap<UserPassCM, UserPass>();
 
+            CreateMap<UserPass, UserPassExpireVM>()
+                .ForMember(des => des.UrlImage,
+                act => act.MapFrom(_ => _.Pass.UrlImage))
+                .ForMember(des => des.Name,
+                act => act.MapFrom(_ => _.Pass.Name));
 
             CreateMap<Ticket, TicketVM>()
                 .ForMember(des => des.TicketTypeName,

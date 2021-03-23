@@ -140,8 +140,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId, _ => _.UsingTickets).ToList();
-                var listExpire = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt < DateTime.Now).ToList();
+                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId, _ => _.UsingTickets,_ => _.Pass).ToList();
+                var listExpire = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt < DateTime.Now, _ => _.Pass).ToList();
                 for (int i = list.Count - 1; i > -1; i--)
                 {
                     var userPass = list[i];
@@ -161,7 +161,8 @@ namespace WebAPI.Controllers
                     }
                 }
                 list.AddRange(listExpire);
-                return Ok(list);
+                var data = list.Select(_ => _mapper.Map<UserPassExpireVM>(_));
+                return Ok(data);
             }
             catch (Exception e)
             {

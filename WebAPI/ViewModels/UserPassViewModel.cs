@@ -23,6 +23,21 @@ namespace WebAPI.ViewModels
         public Pass Pass { get; set; }
     }
 
+    public class UserPassExpireVM
+    {
+        public Guid Id { get; set; }
+        public String Name { get; set; }
+        public String UrlImage { get; set; }
+        public DateTime WillExpireAt { get; set; }
+        public DateTime BoughtAt { get; set; }
+        public String Feedback { get; set; }
+        public decimal PriceWhenBought { get; set; }
+        public Guid PassId { get; set; }
+        public int Rate { get; set; }
+        public bool IsChildren { get; set; }
+        public int NumberOfUsed { get; set; }
+    }
+
     //public class UserPassCM
     //{
     //    public String UserUid { get; set; }
