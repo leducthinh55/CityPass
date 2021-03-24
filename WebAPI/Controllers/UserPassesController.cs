@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
                     .FirstOrDefault();
                 if (ticket != null)
                 {
-                    return Ok(new { isChidren = ticket.UserPass.IsChildren });
+                    return Ok(new { ticketId = ticket.Id, isChidren = ticket.UserPass.IsChildren });
                 }
                 return BadRequest(false);
             }
