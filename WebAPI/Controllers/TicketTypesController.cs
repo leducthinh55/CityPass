@@ -105,7 +105,7 @@ namespace WebAPI.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> CreateTicketType([FromForm] TicketTypeCM ticketType)
+        public async Task<IActionResult> CreateTicketType([FromBody] TicketTypeCM ticketType)
         {
             try
             {
@@ -163,7 +163,7 @@ namespace WebAPI.Controllers
                         })
                         .Child("receipts")
                         .Child("test")
-                        .Child("aspcore1.png")
+                        .Child(file.Name)
                         .PutAsync(ms, cancellation.Token);
 
                         await task;

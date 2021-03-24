@@ -58,6 +58,9 @@ namespace WebAPI.Controllers
                     .FirstOrDefault();
                 if (ticket != null)
                 {
+                    ticket.UsedAt = DateTime.Now;
+                    _iTicketService.UpdateTicket(ticket);
+                    await _iTicketService.SaveTicket();
                     return Ok(new { isChidren = ticket.UserPass.IsChildren });
                 }
                 return BadRequest(false);
