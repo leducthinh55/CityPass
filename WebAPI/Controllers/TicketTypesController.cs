@@ -105,7 +105,7 @@ namespace WebAPI.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> CreateTicketType([FromForm] TicketTypeCM ticketType)
+        public async Task<IActionResult> CreateTicketType([FromBody] TicketTypeCM ticketType)
         {
             try
             {
