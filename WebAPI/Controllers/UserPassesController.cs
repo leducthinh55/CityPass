@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
             _mapper = mapper;
             _iUserService = iUserService;
         }
-        
+
         [HttpGet("check-user-pass-valid")]
         public async Task<IActionResult> CheckUserPassValid(Guid UserPassId, Guid TicketTypeId)
         {
@@ -54,14 +54,11 @@ namespace WebAPI.Controllers
                     return Ok(false);
                 }
                 var ticket = _iTicketService
-                    .GetAllTicket(_ => _.UserPassId == userPass.Id && _.TicketTypeId == TicketTypeId && _.UsedAt == null)
+                    .GetAllTicket(_ => _.UserPassId == userPass.Id && _.TicketTypeId == TicketTypeId && _.UsedAt == null, _ => _.UserPass)
                     .FirstOrDefault();
                 if (ticket != null)
                 {
-                    ticket.UsedAt = DateTime.Now;
-                    _iTicketService.UpdateTicket(ticket);
-                    await _iTicketService.SaveTicket();
-                    return Ok(ticket);
+                    return Ok(new { isChidren = ticket.UserPass.IsChildren });
                 }
                 return BadRequest(false);
             }
@@ -70,13 +67,27 @@ namespace WebAPI.Controllers
                 return BadRequest(e);
             }
         }
+        [HttpPost("agree-deny-user-pass")]
+        public async Task<IActionResult> AgreeDenyUserPass(Guid TicketId)
+        {
+            var ticket = _iTicketService
+                    .GetTicketById(TicketId);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            ticket.UsedAt = DateTime.Now;
+            _iTicketService.UpdateTicket(ticket);
+            await _iTicketService.SaveTicket();
+            return Ok(ticket);
+        }
         [HttpGet("use-history")]
         public IActionResult GetHistory(Guid userPassId)
         {
             try
             {
                 var userPass = _iUserPassService.GetUserPassById(userPassId);
-                if(userPass == null)
+                if (userPass == null)
                 {
                     return NotFound();
                 }
@@ -125,7 +136,7 @@ namespace WebAPI.Controllers
                         userPassVm.NumberOfUsed = used;
                         userPassVm.Pass.UserPasses = null;
                         result.Add(userPassVm);
-                    }   
+                    }
                 }
                 return Ok(result);
             }
@@ -140,7 +151,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId, _ => _.UsingTickets,_ => _.Pass).ToList();
+                var list = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId, _ => _.UsingTickets, _ => _.Pass).ToList();
                 var listExpire = _iUserPassService.GetAllUserPass(_ => _.UserUid == uId && _.WillExpireAt < DateTime.Now, _ => _.Pass).ToList();
                 for (int i = list.Count - 1; i > -1; i--)
                 {
@@ -190,7 +201,7 @@ namespace WebAPI.Controllers
             try
             {
                 var user = _iUserService.GetUserById(userPassCM.UserUid);
-                if(user == null)
+                if (user == null)
                 {
                     user = new User() { Uid = userPassCM.UserUid };
                     _iUserService.AddUser(user);
@@ -198,7 +209,7 @@ namespace WebAPI.Controllers
                 var userPass = _mapper.Map<UserPass>(userPassCM);
                 userPass.UserUid = user.Uid;
                 var pass = _iPassService.GetPassById(userPassCM.PassId);
-                if(!pass.IsSelling)
+                if (!pass.IsSelling)
                 {
                     pass.IsSelling = true;
                     _iPassService.UpdatePass(pass);
@@ -213,8 +224,8 @@ namespace WebAPI.Controllers
                 List<UserPass> listAdd = new List<UserPass>();
                 var childrenPrice = pass.ChildrenPrice;
                 var adultPrice = pass.Price;
-                
-                for (int i = 0; i< userPassCM.QuantiyAdult; i++)
+
+                for (int i = 0; i < userPassCM.QuantiyAdult; i++)
                 {
                     UserPass passAdd = CloneGeneric.Clone<UserPass>(userPass);
                     passAdd.IsChildren = false;

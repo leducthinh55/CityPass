@@ -105,7 +105,7 @@ namespace WebAPI
 
             FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromFile(pathToKey)
+                Credential = GoogleCredential.FromFile(pathToKey),
             });
 
             services.AddAuthorization(options =>
