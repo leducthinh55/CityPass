@@ -58,9 +58,9 @@ namespace WebAPI.Controllers
                     .FirstOrDefault();
                 if (ticket != null)
                 {
-                    ticket.UsedAt = DateTime.Now;
-                    _iTicketService.UpdateTicket(ticket);
-                    await _iTicketService.SaveTicket();
+                    //ticket.UsedAt = DateTime.Now;
+                    //_iTicketService.UpdateTicket(ticket);
+                    //await _iTicketService.SaveTicket();
                     return Ok(ticket);
                 }
                 return BadRequest(false);

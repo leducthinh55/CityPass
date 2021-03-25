@@ -37,8 +37,10 @@ namespace WebAPI.Controllers
             try
             {
                 var TicketType = _ITicketTypeService.GetAllTicketType(_ => _.Id == id, _ => _.Atrraction, _ => _.Atrraction.City).FirstOrDefault();
+                
                 if (TicketType == null) return NotFound();
-                return Ok(TicketType);
+                var result = _mapper.Map<TicketTypeDetailVM>(TicketType);
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -105,7 +107,7 @@ namespace WebAPI.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> CreateTicketType([FromBody] TicketTypeCM ticketType)
+        public async Task<IActionResult> CreateTicketType([FromForm] TicketTypeCM ticketType)
         {
             try
             {
@@ -118,6 +120,34 @@ namespace WebAPI.Controllers
                     CreateAt = DateTime.Now
                 };
                 _ITicketTypeService.AddTicketType(TicketType);
+                await _ITicketTypeService.SaveTicketType();
+                IList<IFormFile> imageUpload = ticketType.ImageUpload.ToList();
+                
+                List<String> listImage = new List<string>();
+                if (imageUpload.Count > 0)
+                {
+                    for (int i = 0; i < imageUpload.Count; i++)
+                    {
+                        var file = imageUpload[i];
+                        Stream ms = file.OpenReadStream();
+                        var cancellation = new CancellationTokenSource();
+                        var task = new FirebaseStorage(
+                        "citypass131999.appspot.com",
+                        new FirebaseStorageOptions
+                        {
+                            AuthTokenAsyncFactory = () => Task.FromResult("eyJhbGciOiJSUzI1NiIsImtpZCI6IjRlMDBlOGZlNWYyYzg4Y2YwYzcwNDRmMzA3ZjdlNzM5Nzg4ZTRmMWUiLCJ0eXAiOiJKV1QifQ.eyJhZG1pbiI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2NpdHlwYXNzMTMxOTk5IiwiYXVkIjoiY2l0eXBhc3MxMzE5OTkiLCJhdXRoX3RpbWUiOjE2MTY1NTQzNTksInVzZXJfaWQiOiJscURaSE45T05tZU12MWJQdmk4SjVzS1VQR1YyIiwic3ViIjoibHFEWkhOOU9ObWVNdjFiUHZpOEo1c0tVUEdWMiIsImlhdCI6MTYxNjU1NDM1OSwiZXhwIjoxNjE2NTU3OTU5LCJlbWFpbCI6InRoaW5oQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0aGluaEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.Fo4-suiJN2srzcicYejDGGero5nFmNj-SWfgMA-YcLbfgfHgA1P8gcg1Y9-Kc2bJTffEhpYTiqgUgft9TRMgDSyUsUt4xLpNC77KqjbGEPM5iqrMOepJAm6A6XLizq9s-ija2BIIrUXDkIHkTaVwC_Q5zsVcmiRZkUo8A_RHW-U7-4juCGkKs8o0tjvrSi-64XDcl8OLUbCWeACYfeJw2lcQvH4I4NgZrdXJcgUi9oHQJ8CqyqmUWdIwnLgF6ETRIgolflK0kjNWpO9HA0b2Avu4zggp9DQfPlw3wID3WZG8Pe7c-2Og3pKj8ymVOZnqegvemJkWLtu7Qqin0RynPA"),
+                            ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                        })
+                        .Child("ticket-type")
+                        .Child($"{TicketType.Id}")
+                        .Child(file.Name + DateTime.Now.ToString())
+                        .PutAsync(ms, cancellation.Token);
+
+                        listImage.Add(await task);
+                    }
+                }
+                TicketType.UrlImage = String.Join(";", listImage);
+                _ITicketTypeService.UpdateTicketType(TicketType);
                 bool result = await _ITicketTypeService.SaveTicketType();
                 if (!result)
                 {
@@ -141,18 +171,13 @@ namespace WebAPI.Controllers
                 var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
 
                 IList<IFormFile> imageUpload = ticketTypeUM.ImageUpload.ToList();
+                List<String> listImage = new List<string>();
                 if (imageUpload.Count > 0)
                 {
-                    using (var memoryStream = new MemoryStream())
+                    for (int i = 0; i < imageUpload.Count; i++)
                     {
-                        var file = imageUpload[0];
-                        //await file.CopyToAsync(memoryStream);
-                        //Stream ms = (Stream)memoryStream;
-                        Stream ms = await FormFileExtension.GetStream(file);
-                        //var stream = new FileStream(@"C:\Users\thinh\Desktop\download.jfif", FileMode.Open);
-                        file.CopyTo(memoryStream);
-                        var fileBytes = memoryStream.ToArray();
-                        string s = Convert.ToBase64String(fileBytes);
+                        var file = imageUpload[i];
+                        Stream ms = file.OpenReadStream();
                         var cancellation = new CancellationTokenSource();
                         var task = new FirebaseStorage(
                         "citypass131999.appspot.com",
@@ -161,14 +186,16 @@ namespace WebAPI.Controllers
                             AuthTokenAsyncFactory = () => Task.FromResult("eyJhbGciOiJSUzI1NiIsImtpZCI6IjRlMDBlOGZlNWYyYzg4Y2YwYzcwNDRmMzA3ZjdlNzM5Nzg4ZTRmMWUiLCJ0eXAiOiJKV1QifQ.eyJhZG1pbiI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2NpdHlwYXNzMTMxOTk5IiwiYXVkIjoiY2l0eXBhc3MxMzE5OTkiLCJhdXRoX3RpbWUiOjE2MTY1NTQzNTksInVzZXJfaWQiOiJscURaSE45T05tZU12MWJQdmk4SjVzS1VQR1YyIiwic3ViIjoibHFEWkhOOU9ObWVNdjFiUHZpOEo1c0tVUEdWMiIsImlhdCI6MTYxNjU1NDM1OSwiZXhwIjoxNjE2NTU3OTU5LCJlbWFpbCI6InRoaW5oQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0aGluaEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.Fo4-suiJN2srzcicYejDGGero5nFmNj-SWfgMA-YcLbfgfHgA1P8gcg1Y9-Kc2bJTffEhpYTiqgUgft9TRMgDSyUsUt4xLpNC77KqjbGEPM5iqrMOepJAm6A6XLizq9s-ija2BIIrUXDkIHkTaVwC_Q5zsVcmiRZkUo8A_RHW-U7-4juCGkKs8o0tjvrSi-64XDcl8OLUbCWeACYfeJw2lcQvH4I4NgZrdXJcgUi9oHQJ8CqyqmUWdIwnLgF6ETRIgolflK0kjNWpO9HA0b2Avu4zggp9DQfPlw3wID3WZG8Pe7c-2Og3pKj8ymVOZnqegvemJkWLtu7Qqin0RynPA"),
                             ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
                         })
-                        .Child("receipts")
-                        .Child("test")
-                        .Child(file.Name)
+                        .Child("ticket-type")
+                        .Child($"{ticketTypeUM.Id}")
+                        .Child(file.Name + DateTime.Now.ToString())
                         .PutAsync(ms, cancellation.Token);
 
-                        await task;
+                        listImage.Add(await task);
                     }
                 }
+                listImage.AddRange(ticketTypeUM.UrlImages);
+                TicketType.UrlImage = String.Join(";", listImage);
                 TicketType.Name = ticketTypeUM.Name;
                 //TicketType.UrlImage = ticketTypeUM.UrlImage;
                 TicketType.AdultPrice = ticketTypeUM.AdultPrice;

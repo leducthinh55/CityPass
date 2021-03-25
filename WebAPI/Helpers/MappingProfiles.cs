@@ -30,7 +30,7 @@ namespace WebAPI.Helpers
                 .ForMember(des => des.NumberOfVisiter,
                 act => act.MapFrom(src => src.Tickets.Count))
                 .ForMember(des => des.UrlImage,
-                act => act.MapFrom(src => src.UrlImage != null ? src.UrlImage.Split(new char[] { ';'})[0] : ""));
+                act => act.MapFrom(src => src.UrlImage != null ? src.UrlImage.Split(new char[] { ';' })[0] : ""));
 
             CreateMap<Pass, PassVM>()
                 .ForMember(des => des.Collections,
@@ -41,7 +41,7 @@ namespace WebAPI.Helpers
                 src => src.Ignore())
                 .ForMember(des => des.CreateAt,
                 act => act.MapFrom(_ => DateTime.Now));
-            
+
             CreateMap<PassUM, Pass>()
                 .ForMember(des => des.Collections,
                 src => src.Ignore())
@@ -64,6 +64,12 @@ namespace WebAPI.Helpers
             CreateMap<Ticket, TicketVM>()
                 .ForMember(des => des.TicketTypeName,
                 act => act.MapFrom(_ => _.TicketType.Name));
+
+            CreateMap<TicketType, TicketTypeDetailVM>()
+                .ForMember(des => des.UrlImage,
+                src => src.Ignore())
+                .ForMember(des => des.UrlImages,
+                act => act.MapFrom(_ => _.UrlImage.Split(new char[] { ';' })));
         }
     }
 }
