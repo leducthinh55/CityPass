@@ -46,6 +46,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [Authorize]
         [HttpGet]
         public IActionResult GetAttraction([FromQuery] AttractionSM attractionSM, [FromQuery] DefaultSearch defaultSearch)
         {
