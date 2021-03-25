@@ -46,7 +46,6 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [Authorize]
         [HttpGet]
         public IActionResult GetAttraction([FromQuery] AttractionSM attractionSM, [FromQuery] DefaultSearch defaultSearch)
         {
@@ -96,6 +95,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAttraction(AttractionCM attractionCM)
         {
