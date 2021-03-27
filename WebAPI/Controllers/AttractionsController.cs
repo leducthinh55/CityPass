@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateAttraction(AttractionCM attractionCM)
         {
@@ -130,7 +130,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdateAttraction(AttractionUM attractionUM)
         {
@@ -167,7 +167,7 @@ namespace WebAPI.Controllers
             }
 
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAttraction(int id)
         {

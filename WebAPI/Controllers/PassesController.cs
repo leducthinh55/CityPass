@@ -11,6 +11,8 @@ using WebAPI.Utils;
 using WebAPI.ViewModels;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+
 namespace WebAPI.Controllers
 {
     [ApiController]
@@ -172,7 +174,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreatePass([FromBody] PassCM passCM)
         {
@@ -205,7 +207,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdatePass([FromBody] PassUM passUM)
         {

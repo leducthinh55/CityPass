@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service;
 using WebAPI.Utils;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
@@ -53,6 +54,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateCategory(String Name)
         {
@@ -75,7 +77,7 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdateCategory(int Id, String Name)
         {
@@ -99,7 +101,7 @@ namespace WebAPI.Controllers
             }
 
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

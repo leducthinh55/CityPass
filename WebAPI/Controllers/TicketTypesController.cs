@@ -15,6 +15,7 @@ using WebAPI.Helpers;
 using System.IO;
 using Firebase.Storage;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
@@ -106,9 +107,13 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateTicketType([FromForm] TicketTypeCM ticketType)
         {
+            var User = HttpContext.User;
+            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
+            var firebaseToken = await auth.VerifyIdTokenAsync(User.Identity.ToString());
             try
             {
                 var TicketType = new TicketType
@@ -135,7 +140,7 @@ namespace WebAPI.Controllers
                         "citypass131999.appspot.com",
                         new FirebaseStorageOptions
                         {
-                            AuthTokenAsyncFactory = () => Task.FromResult("eyJhbGciOiJSUzI1NiIsImtpZCI6IjRlMDBlOGZlNWYyYzg4Y2YwYzcwNDRmMzA3ZjdlNzM5Nzg4ZTRmMWUiLCJ0eXAiOiJKV1QifQ.eyJhZG1pbiI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2NpdHlwYXNzMTMxOTk5IiwiYXVkIjoiY2l0eXBhc3MxMzE5OTkiLCJhdXRoX3RpbWUiOjE2MTY1NTQzNTksInVzZXJfaWQiOiJscURaSE45T05tZU12MWJQdmk4SjVzS1VQR1YyIiwic3ViIjoibHFEWkhOOU9ObWVNdjFiUHZpOEo1c0tVUEdWMiIsImlhdCI6MTYxNjU1NDM1OSwiZXhwIjoxNjE2NTU3OTU5LCJlbWFpbCI6InRoaW5oQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0aGluaEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.Fo4-suiJN2srzcicYejDGGero5nFmNj-SWfgMA-YcLbfgfHgA1P8gcg1Y9-Kc2bJTffEhpYTiqgUgft9TRMgDSyUsUt4xLpNC77KqjbGEPM5iqrMOepJAm6A6XLizq9s-ija2BIIrUXDkIHkTaVwC_Q5zsVcmiRZkUo8A_RHW-U7-4juCGkKs8o0tjvrSi-64XDcl8OLUbCWeACYfeJw2lcQvH4I4NgZrdXJcgUi9oHQJ8CqyqmUWdIwnLgF6ETRIgolflK0kjNWpO9HA0b2Avu4zggp9DQfPlw3wID3WZG8Pe7c-2Og3pKj8ymVOZnqegvemJkWLtu7Qqin0RynPA"),
+                            //AuthTokenAsyncFactory = () => Task.FromResult("eyJhbGciOiJSUzI1NiIsImtpZCI6IjRlMDBlOGZlNWYyYzg4Y2YwYzcwNDRmMzA3ZjdlNzM5Nzg4ZTRmMWUiLCJ0eXAiOiJKV1QifQ.eyJhZG1pbiI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2NpdHlwYXNzMTMxOTk5IiwiYXVkIjoiY2l0eXBhc3MxMzE5OTkiLCJhdXRoX3RpbWUiOjE2MTY1NTQzNTksInVzZXJfaWQiOiJscURaSE45T05tZU12MWJQdmk4SjVzS1VQR1YyIiwic3ViIjoibHFEWkhOOU9ObWVNdjFiUHZpOEo1c0tVUEdWMiIsImlhdCI6MTYxNjU1NDM1OSwiZXhwIjoxNjE2NTU3OTU5LCJlbWFpbCI6InRoaW5oQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0aGluaEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.Fo4-suiJN2srzcicYejDGGero5nFmNj-SWfgMA-YcLbfgfHgA1P8gcg1Y9-Kc2bJTffEhpYTiqgUgft9TRMgDSyUsUt4xLpNC77KqjbGEPM5iqrMOepJAm6A6XLizq9s-ija2BIIrUXDkIHkTaVwC_Q5zsVcmiRZkUo8A_RHW-U7-4juCGkKs8o0tjvrSi-64XDcl8OLUbCWeACYfeJw2lcQvH4I4NgZrdXJcgUi9oHQJ8CqyqmUWdIwnLgF6ETRIgolflK0kjNWpO9HA0b2Avu4zggp9DQfPlw3wID3WZG8Pe7c-2Og3pKj8ymVOZnqegvemJkWLtu7Qqin0RynPA"),
                             ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
                         })
                         .Child("ticket-type")
@@ -160,12 +165,13 @@ namespace WebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdateTicketType([FromForm] TicketTypeUM ticketTypeUM)
         {
             try
             {
+
                 var TicketType = _ITicketTypeService.GetTicketTypeById(ticketTypeUM.Id);
                 if (TicketType == null) return NotFound();
                 var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
@@ -215,7 +221,7 @@ namespace WebAPI.Controllers
             }
 
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTicketType(Guid id)
         {
