@@ -13,7 +13,8 @@ namespace Infrastructure.Data
     {
 
         public CityPassContext() : base((new DbContextOptionsBuilder())
-            .UseSqlServer("Server=.;Database=CityPass;Trusted_Connection=True;MultipleActiveResultSets= true")
+            //.UseSqlServer("Server=.;Database=CityPass;Trusted_Connection=True;MultipleActiveResultSets= true")
+            .UseSqlServer("Server=citypassdb.database.windows.net;Database=CityPassDB;user id=admincitypass;password=CityPass123;Trusted_Connection=True;Integrated Security=false;MultipleActiveResultSets= true")
             .EnableSensitiveDataLogging()
             .Options)
         {

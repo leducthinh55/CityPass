@@ -91,6 +91,8 @@ namespace WebAPI
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
+
+            services.AddTransient<IUploadFile, UploadFile>();
             #endregion
 
             services.AddRouting(option => { option.LowercaseUrls = true; });
