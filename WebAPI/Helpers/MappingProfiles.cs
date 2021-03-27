@@ -70,6 +70,12 @@ namespace WebAPI.Helpers
                 src => src.Ignore())
                 .ForMember(des => des.UrlImages,
                 act => act.MapFrom(_ => _.UrlImage.Split(new char[] { ';' })));
+
+            CreateMap<TicketType, TicketTypeDetailVM1>()
+                .ForMember(des => des.Lat,
+                act => act.MapFrom(_ => _.Atrraction.Lat))
+                .ForMember(des => des.Lng,
+                act => act.MapFrom(_ => _.Atrraction.Lng));
         }
     }
 }

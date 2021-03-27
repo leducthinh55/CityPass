@@ -54,13 +54,14 @@ namespace WebAPI.Controllers
 
                     var collection = _iCollectionService.GetAllCollection(v => v.Id == _.Id, v => v.TicketTypeInCollections).FirstOrDefault();
                     var collectionVM = _mapper.Map<CollectionVM>(collection);
-                    collectionVM.TicketTypes = new List<TicketType>();
+                    collectionVM.TicketTypes = new List<TicketTypeDetailVM1>();
                     var ticketTypeInCollections = collection.TicketTypeInCollections;
                     ticketTypeInCollections.ToList().ForEach(t =>
                     {
-                        var ticketType = _iTicketTypeService.GetTicketTypeById(t.TicketTypeId);
-                        ticketType.TicketTypeInCollections = null;
-                        collectionVM.TicketTypes.Add(ticketType);
+                        //var ticketType = _iTicketTypeService.GetTicketTypeById(t.TicketTypeId);
+                        var ticketType = _iTicketTypeService.GetAllTicketType(_ => _.Id == t.TicketTypeId,_ => _.Atrraction).FirstOrDefault();
+                        var tickeTypeVM = _mapper.Map<TicketTypeDetailVM1>(ticketType);
+                        collectionVM.TicketTypes.Add(tickeTypeVM);
                     });
                     result.Collections.Add(collectionVM);
                 });

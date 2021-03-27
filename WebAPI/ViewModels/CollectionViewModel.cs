@@ -12,7 +12,7 @@ namespace WebAPI.ViewModels
 
         public int MaxConstrain { get; set; }
 
-        public virtual ICollection<TicketType> TicketTypes { get; set; }
+        public virtual ICollection<TicketTypeDetailVM1> TicketTypes { get; set; }
     }
 
     public class CollectionCM

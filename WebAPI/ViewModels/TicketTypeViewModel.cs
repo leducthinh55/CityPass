@@ -44,6 +44,15 @@ namespace WebAPI.ViewModels
     {
         public String[] UrlImages { get; set; }
     }
+    public class TicketTypeDetailVM1
+    {
+        public Double Lat { get; set; }
+        public Double Lng { get; set; }
+        public Guid Id { get; set; }
+        public String Name { get; set; }
+        public decimal? AdultPrice { get; set; }
+        public decimal? ChildrenPrice { get; set; }
+    }
     public class TicketTypeUM
     {
         public Guid Id { get; set; }
