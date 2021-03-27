@@ -80,6 +80,28 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("pass-favorite")]
+        public IActionResult GetPassFavorite()
+        {
+            try
+            {
+                var listUserPass = _iUserPassService.GetAllUserPass().GroupBy(_ => _.PassId).Select(_ => new { passId = _.Key, count = _.Count() }).OrderBy(_ => _.count).Take(5);
+                var listPass = new List<Pass>();
+                listUserPass.ToList().ForEach(_ =>
+                {
+                    var pass = _iPassService.GetPassById(_.passId);
+                    if(pass != null)
+                    {
+                        listPass.Add(pass);
+                    }
+                });
+                return Ok(listPass);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
         [HttpGet]
         public IActionResult GetPass(decimal priceFrom, decimal priceTo, String name, int cityId, Guid? ticketTypeId, [FromQuery] DefaultSearch defaultSearch)
         {
